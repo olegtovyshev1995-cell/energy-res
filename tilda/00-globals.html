@@ -62,10 +62,11 @@
 [data-h="h3"]:hover{transform:translateY(-2px) !important}
 [data-h="h4"]:hover{transform:scale(1.08) !important}
 [data-h="h5"]:hover{border-color:var(--org1) !important;color:#fff !important}
-[data-h="h6"]:hover{transform:translateY(-3px) scale(1.03) !important;box-shadow:0 18px 42px rgba(255,90,0,.65) !important}
-[data-h="h7"]:hover{animation-play-state:paused !important}
-[data-h="h8"]:hover{color:#fff !important;border-color:rgba(255,132,32,.4) !important}
-[data-h="h9"]:hover{transform:translateY(-2px) !important;box-shadow:0 16px 40px rgba(255,90,0,.55) !important}
+[data-h="h6"]:hover{transform:translateY(-2px) !important;box-shadow:0 16px 40px rgba(255,90,0,.55) !important}
+[data-h="h7"]:hover{transform:translateY(-3px) scale(1.03) !important;box-shadow:0 18px 42px rgba(255,90,0,.65) !important}
+[data-hf="f1"]:focus{border-color:var(--org1) !important;outline:none !important}
+[data-h="h8"]:hover{animation-play-state:paused !important}
+[data-h="h9"]:hover{color:#fff !important;border-color:rgba(255,132,32,.4) !important}
 [data-h="h10"]:hover{transform:translateY(-4px) !important;border-color:rgba(255,132,32,.45) !important;box-shadow:0 18px 44px rgba(0,0,0,.4) !important}
 [data-h="h11"]:hover{transform:translateY(-4px) !important;border-color:rgba(255,132,32,.45) !important}
 [data-h="h12"]:hover{transform:translateY(-1px) !important}
@@ -224,6 +225,29 @@
   function openModal() { var m = document.getElementById('er-modal'); if (m) { m.style.display = 'flex'; document.body.style.overflow = 'hidden'; renderQuiz(); } }
   function closeModal() { var m = document.getElementById('er-modal'); if (m) { m.style.display = 'none'; document.body.style.overflow = ''; } }
 
+  /* ------------------------- callback ("Заказать звонок") ------------------------- */
+  function resetCall() {
+    var m = document.getElementById('er-call-modal'); if (!m) return;
+    var f = m.querySelector('[data-call-form]'), d = m.querySelector('[data-call-done]');
+    if (f) f.style.display = ''; if (d) d.style.display = 'none';
+    var n = m.querySelector('#er-call-name'), ph = m.querySelector('#er-call-phone');
+    if (n) { n.value = ''; n.style.borderColor = ''; }
+    if (ph) { ph.value = ''; ph.style.borderColor = ''; }
+  }
+  function openCall() { var m = document.getElementById('er-call-modal'); if (m) { resetCall(); m.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
+  function closeCall() { var m = document.getElementById('er-call-modal'); if (m) { m.style.display = 'none'; document.body.style.overflow = ''; } }
+  function submitCall() {
+    var m = document.getElementById('er-call-modal'); if (!m) return;
+    var n = m.querySelector('#er-call-name'), ph = m.querySelector('#er-call-phone');
+    var nameOk = !!n && n.value.trim().length >= 2;
+    var digits = (ph ? ph.value : '').replace(/\D/g, '');
+    var phoneOk = digits.length >= 10;
+    if (n) n.style.borderColor = nameOk ? '' : '#ff4a4a';
+    if (ph) ph.style.borderColor = phoneOk ? '' : '#ff4a4a';
+    if (nameOk && phoneOk) { m.querySelector('[data-call-form]').style.display = 'none'; m.querySelector('[data-call-done]').style.display = ''; }
+    else { (nameOk ? ph : n).focus(); }
+  }
+
   /* ------------------------- scroll to quiz ------------------------- */
   function scrollToQuiz() {
     var e = document.getElementById('quiz-card');
@@ -251,6 +275,9 @@
       case 'scroll-quiz': toggleMenu(false); openModal(); break;
       case 'open-modal': openModal(); break;
       case 'close-modal': closeModal(); break;
+      case 'open-call': toggleMenu(false); openCall(); break;
+      case 'close-call': closeCall(); break;
+      case 'call-submit': submitCall(); break;
       case 'stop': e.stopPropagation(); break;
       case 'menu': toggleMenu(); break;
       case 'menu-link': toggleMenu(false); break;
@@ -278,7 +305,7 @@
     else if (act === 'calc') { var box = t.closest('[data-calc-box]') || document; calcUpdate(box); }
   });
   // close modal / menu on ESC
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeModal(); toggleMenu(false); } });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeModal(); closeCall(); toggleMenu(false); } });
 
   /* ------------------------- on ready ------------------------- */
   function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
