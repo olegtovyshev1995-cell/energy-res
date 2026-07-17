@@ -1,0 +1,344 @@
+<!-- ЭНЕРГОРЕСУРС · Блок 00 — СТИЛИ И СКРИПТЫ · вставить ПЕРВЫМ (T123 / «HTML»). Ничего не показывает. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ЭНЕРГОРЕСУРС — общие стили для всех блоков. Ставятся один раз в первом блоке. */
+:root{--org1:#ff8420;--org2:#ff5500;--org:#ff7b1a;--red:#ff4a4a;--panel:#0b0b0e;--panel2:#131318;--line:#26262e;--mut:#9a9aa3}
+.er-blk,.er-blk *{box-sizing:border-box}
+.er-blk{background:#000;color:#fff;font-family:Montserrat,Arial,sans-serif;line-height:1.5;position:relative;overflow-x:clip;-webkit-text-size-adjust:100%}
+.er-blk.er-open{overflow:visible}
+.er-blk a{color:inherit;text-decoration:none}
+.er-blk button{font-family:inherit}
+.er-blk ::selection{background:#ff5500;color:#fff}
+.er-blk img{max-width:100%}
+.er-blk h1,.er-blk h2,.er-blk h3,.er-blk h4,.er-blk p{margin:0}
+.er-blk ::-webkit-scrollbar{height:8px;width:8px}
+.er-blk ::-webkit-scrollbar-thumb{background:#2c2c33;border-radius:8px}
+@keyframes erpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+@keyframes erfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+@keyframes erglow{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.9;transform:scale(1.08)}}
+@keyframes ermarquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes erbob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+@keyframes erlive{0%{box-shadow:0 0 0 0 rgba(61,214,140,.55)}70%{box-shadow:0 0 0 14px rgba(61,214,140,0)}100%{box-shadow:0 0 0 0 rgba(61,214,140,0)}}
+@keyframes erlivedot{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* quiz interactive states (override inline styles) */
+.erq-opt:hover{border-color:var(--org1)!important;background:#1a1a21!important;transform:translateX(3px)}
+.erq-submit:hover{transform:translateY(-2px)}
+.erq-restart:hover{border-color:var(--org1)!important}
+.erq-input:focus{border-color:var(--org1)!important;outline:none}
+
+/* ---------------- HEADER ---------------- */
+.er-nav a{white-space:nowrap}
+.er-nav a:hover{color:#fff!important}
+.er-burger{display:none;flex:none;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:#111116;color:#fff;cursor:pointer;align-items:center;justify-content:center;margin-left:auto}
+.er-mnav a:hover{color:var(--org1)!important}
+.er-head-phone-m{display:none}
+
+@media(max-width:1120px){
+  .er-rating{display:none!important}
+}
+@media(max-width:980px){
+  .er-nav{display:none!important}
+  .er-head-contacts{display:none!important}
+  .er-burger{display:inline-flex}
+  .er-head-phone-m{display:inline-flex!important}
+}
+
+/* ---------------- generic mobile polish ---------------- */
+@media(max-width:600px){
+  .er-hero-img{float:none!important;display:block!important;width:min(230px,58%)!important;margin:0 auto 16px!important}
+}
+
+/* generated hover/focus states */
+[data-h="h1"]:hover{color:#fff !important}
+[data-h="h2"]:hover{transform:translateY(-2px) !important;box-shadow:0 12px 30px rgba(255,90,0,.5) !important}
+[data-h="h3"]:hover{transform:translateY(-2px) !important}
+[data-h="h4"]:hover{transform:scale(1.08) !important}
+[data-h="h5"]:hover{border-color:var(--org1) !important;color:#fff !important}
+[data-h="h6"]:hover{transform:translateY(-3px) scale(1.03) !important;box-shadow:0 18px 42px rgba(255,90,0,.65) !important}
+[data-h="h7"]:hover{animation-play-state:paused !important}
+[data-h="h8"]:hover{color:#fff !important;border-color:rgba(255,132,32,.4) !important}
+[data-h="h9"]:hover{transform:translateY(-2px) !important;box-shadow:0 16px 40px rgba(255,90,0,.55) !important}
+[data-h="h10"]:hover{transform:translateY(-4px) !important;border-color:rgba(255,132,32,.45) !important;box-shadow:0 18px 44px rgba(0,0,0,.4) !important}
+[data-h="h11"]:hover{transform:translateY(-4px) !important;border-color:rgba(255,132,32,.45) !important}
+[data-h="h12"]:hover{transform:translateY(-1px) !important}
+[data-h="h13"]:hover{border-color:var(--org1) !important}
+[data-h="h14"]:hover{border-color:rgba(255,132,32,.4) !important}
+[data-h="h15"]:hover{color:#fff !important;border-color:rgba(255,132,32,.45) !important}
+[data-h="h16"]:hover{transform:translateY(-2px) !important;box-shadow:0 18px 46px rgba(255,90,0,.6) !important}
+[data-h="h17"]:hover{transform:translateY(-2px) !important;box-shadow:0 18px 46px rgba(255,90,0,.55) !important}
+[data-h="h18"]:hover{transform:translateY(-4px) !important;border-color:rgba(255,132,32,.4) !important}
+[data-h="h19"]:hover{border-color:var(--org1) !important;color:var(--org1) !important}
+</style>
+<script>
+/* ЭНЕРГОРЕСУРС — единый скрипт интерактива для всех блоков Tilda.
+   Ставится один раз (в самом первом блоке). Работает по всей странице через
+   делегирование событий, поэтому порядок и количество блоков не важны. */
+(function () {
+  'use strict';
+  if (window.__ER_INIT) return; window.__ER_INIT = true;
+
+  /* ------------------------- quiz state machine ------------------------- */
+  var STEPS = [
+    { key: 'power', q: 'Какая мощность нужна?', opts: ['Не знаю — подберите под нагрузку', '30–100 кВт', '100–200 кВт', '200–500 кВт'] },
+    { key: 'object', q: 'Какой объект запитываем?', opts: ['Стройплощадка без сети', 'Производство / резерв', 'Нефтегаз, буровая', 'Мероприятие'] },
+    { key: 'timing', q: 'Когда нужна подача?', opts: ['Срочно — от 2 часов', 'Завтра–послезавтра', 'В течение недели', 'Планирую заранее'] },
+    { key: 'term', q: 'Срок аренды?', opts: ['До 3 дней', '1–4 недели', '1–3 месяца', 'От 3 месяцев'] }
+  ];
+  var qs = { step: 0, answers: {}, phone: '', channel: 'Звонок' };
+
+  function estimate() {
+    var p = qs.answers.power || '';
+    if (p.indexOf('200–500') >= 0) return 'от 8 500 ₽ / сутки';
+    if (p.indexOf('100–200') >= 0) return 'от 4 900 ₽ / сутки';
+    return 'от 2 500 ₽ / сутки';
+  }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  var CHK = '<svg viewBox="0 0 24 24" fill="none" stroke="#3DD68C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:none;margin-top:1px"><path d="M4 12.5l5 5L20 6"/></svg>';
+  var ARR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+  function quizBody() {
+    var n = STEPS.length, step = qs.step;
+    var isQuestion = step < n, isContact = step === n, quizDone = step > n;
+    var progress = Math.round(Math.min(step, n) / n * 100) + '%';
+    var stepLabel = isContact ? 'Последний шаг' : ('Шаг ' + (step + 1) + ' из ' + n);
+    var html = '';
+    if (!quizDone) {
+      html += '<div>';
+      html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;padding-right:34px">';
+      html += '<span style="flex:none;width:34px;height:34px;border-radius:9px;background:linear-gradient(0deg,var(--org1),var(--org2));display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M13 3L4 14h6l-1 7 9-11h-6z"/></svg></span>';
+      html += '<h3 style="font-size:19px;font-weight:800;line-height:1.15;margin:0;text-transform:uppercase">Узнайте мощность и цену за 40 сек</h3></div>';
+      html += '<div style="color:var(--mut);font-size:13px;margin-bottom:18px">3 вопроса. Цена — сразу на экране, без звонков и спама.</div>';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--mut);margin-bottom:8px"><span style="font-weight:600;color:#ffb066">' + stepLabel + '</span><span>' + progress + '</span></div>';
+      html += '<div style="height:6px;background:#26262e;border-radius:6px;overflow:hidden;margin-bottom:22px"><div style="height:100%;background:linear-gradient(90deg,var(--org1),var(--org2));border-radius:6px;transition:width .45s cubic-bezier(.4,0,.2,1);width:' + progress + '"></div></div>';
+
+      if (isQuestion) {
+        var cur = STEPS[step];
+        html += '<div><div style="font-size:16px;font-weight:700;margin-bottom:14px">' + cur.q + '</div><div style="display:grid;gap:10px">';
+        for (var i = 0; i < cur.opts.length; i++) {
+          html += '<button class="erq-opt" data-act="quiz-answer" data-key="' + cur.key + '" data-label="' + esc(cur.opts[i]) + '" style="text-align:left;width:100%;background:#0e0e13;border:1px solid var(--line);border-radius:12px;padding:14px 16px;color:#fff;font-size:14.5px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:border-color .15s,background .15s,transform .1s">' + cur.opts[i] + '<span style="color:var(--org1);flex:none">' + ARR + '</span></button>';
+        }
+        html += '</div></div>';
+      } else { // contact
+        html += '<div>';
+        html += '<div style="background:rgba(255,90,0,.09);border:1px solid rgba(255,132,32,.35);border-radius:14px;padding:16px;margin-bottom:18px">';
+        html += '<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em"><svg viewBox="0 0 24 24" fill="none" stroke="var(--org1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg>Предварительная вилка</div>';
+        html += '<div style="font-size:26px;font-weight:900;color:#fff;margin-top:4px">' + estimate() + '</div>';
+        html += '<div style="font-size:12.5px;color:var(--mut);margin-top:4px">Точный расчёт под ваш объект пришлём в течение 15 минут.</div></div>';
+        html += '<div style="font-size:15px;font-weight:700;margin-bottom:10px">Куда прислать расчёт?</div>';
+        html += '<input class="erq-input" data-act="quiz-phone" value="' + esc(qs.phone) + '" placeholder="+7 (___) ___-__-__" inputmode="tel" style="width:100%;background:#0e0e13;border:1px solid var(--line);border-radius:12px;padding:14px 16px;color:#fff;font-size:15px;font-family:inherit;margin-bottom:10px">';
+        html += '<div style="display:flex;gap:8px;margin-bottom:16px">';
+        ['Звонок', 'WhatsApp', 'Telegram'].forEach(function (label) {
+          var a = qs.channel === label;
+          html += '<button data-act="quiz-channel" data-channel="' + label + '" style="flex:1;padding:11px 8px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;border:1px solid ' + (a ? '#ff8420' : '#26262e') + ';background:' + (a ? 'rgba(255,90,0,.14)' : '#0e0e13') + ';color:' + (a ? '#ffb066' : '#cfcfd6') + '">' + label + '</button>';
+        });
+        html += '</div>';
+        html += '<button class="erq-submit" data-act="quiz-submit" style="width:100%;display:flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(0deg,var(--org1),var(--org2));color:#fff;font-weight:800;font-size:16px;padding:16px;border:none;border-radius:12px;cursor:pointer;font-family:inherit;box-shadow:0 12px 30px rgba(255,90,0,.4);transition:transform .15s,box-shadow .15s">Узнать цену аренды<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>';
+        html += '<div style="color:var(--mut);font-size:11px;margin-top:10px;text-align:center">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</div>';
+        html += '<button data-act="quiz-back" style="width:100%;margin-top:8px;background:none;border:none;color:var(--mut);font-size:13px;cursor:pointer;font-family:inherit">← назад</button>';
+        html += '</div>';
+      }
+      html += '<div style="display:grid;gap:8px;margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)">';
+      html += '<div style="display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:#cfcfd6">' + CHK + ' Сервисное обслуживание уже включено в стоимость</div>';
+      html += '<div style="display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:#cfcfd6">' + CHK + ' Прайс-лист на аренду ДГУ по спеццене вместе с расчётом</div>';
+      html += '</div></div>';
+    } else {
+      html += '<div style="text-align:center;padding:24px 8px">';
+      html += '<div style="width:74px;height:74px;border-radius:50%;background:rgba(61,214,140,.12);border:1px solid rgba(61,214,140,.4);display:flex;align-items:center;justify-content:center;margin:0 auto 18px"><svg viewBox="0 0 24 24" fill="none" stroke="#3DD68C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px"><path d="M4 12.5l5 5L20 6"/></svg></div>';
+      html += '<h3 style="font-size:22px;font-weight:800;margin:0 0 8px">Заявка принята!</h3>';
+      html += '<p style="color:var(--mut);font-size:14.5px;margin:0 0 6px">Инженер подготовит точный расчёт под ваш объект и свяжется в течение 15 минут.</p>';
+      html += '<p style="color:#fff;font-size:15px;font-weight:700;margin:14px 0 4px">Ваша вилка: ' + estimate() + '</p>';
+      html += '<button class="erq-restart" data-act="quiz-restart" style="margin-top:18px;background:none;border:1px solid var(--line);color:#fff;font-size:14px;padding:12px 22px;border-radius:10px;cursor:pointer;font-family:inherit">Пройти ещё раз</button>';
+      html += '</div>';
+    }
+    return html;
+  }
+  function renderQuiz() {
+    var mounts = document.querySelectorAll('[data-quiz-body]');
+    for (var i = 0; i < mounts.length; i++) {
+      var active = document.activeElement;
+      // preserve caret if the focused phone input lives in this mount
+      var keepPhone = active && active.getAttribute && active.getAttribute('data-act') === 'quiz-phone' && mounts[i].contains(active);
+      if (keepPhone) continue; // don't rebuild the mount the user is typing into
+      mounts[i].innerHTML = quizBody();
+    }
+  }
+
+  /* ------------------------- calculator ------------------------- */
+  function rateFor(kw) {
+    var pts = [[30, 2500], [100, 3900], [200, 4900], [320, 6500], [500, 8500]];
+    if (kw <= 30) return 2500; if (kw >= 500) return 8500;
+    for (var i = 1; i < pts.length; i++) if (kw <= pts[i][0]) { var a = pts[i - 1], b = pts[i]; return a[1] + (b[1] - a[1]) * (kw - a[0]) / (b[0] - a[0]); }
+    return 8500;
+  }
+  function calcUpdate(scope) {
+    var powerEl = scope.querySelector('[data-calc="power"]');
+    var termEl = scope.querySelector('[data-calc="term"]');
+    if (!powerEl || !termEl) return;
+    var kw = +powerEl.value, term = +termEl.value;
+    var rate = rateFor(kw), disc = 0;
+    if (term >= 90) disc = 0.18; else if (term >= 30) disc = 0.10; else if (term >= 14) disc = 0.05;
+    var perDay = Math.round(rate * (1 - disc) / 50) * 50;
+    var fmt = function (x) { return Math.round(x).toLocaleString('ru-RU'); };
+    var powersText = kw < 60 ? 'освещение, бытовки, ручной инструмент' : kw < 150 ? 'сварка, компрессоры, малые станки' : kw < 300 ? 'краны, насосы, цех среднего предприятия' : 'производственная линия, ЦОД, крупный объект';
+    var set = function (sel, v) { var e = scope.querySelector(sel); if (e) e.textContent = v; };
+    set('[data-bind="calcPowerLabel"]', kw + ' кВт');
+    set('[data-bind="calcTermLabel"]', term + ' дн.');
+    set('[data-bind="calcPerDay"]', fmt(perDay));
+    set('[data-bind="calcTotal"]', fmt(perDay * term));
+    set('[data-bind="calcPowersText"]', powersText);
+    var badge = scope.querySelector('[data-bind="calcDisc"]');
+    if (badge) {
+      if (disc) { badge.style.display = ''; var t = badge.querySelector('[data-bind="calcDiscVal"]'); if (t) t.textContent = Math.round(disc * 100) + '%'; }
+      else badge.style.display = 'none';
+    }
+  }
+
+  /* ------------------------- faq ------------------------- */
+  function faqToggle(item) {
+    var section = item.closest('[data-faq-list]') || document;
+    var items = section.querySelectorAll('[data-faq-item]');
+    var wasOpen = item.getAttribute('data-open') === '1';
+    for (var i = 0; i < items.length; i++) setFaq(items[i], false);
+    if (!wasOpen) setFaq(item, true);
+  }
+  function setFaq(item, open) {
+    item.setAttribute('data-open', open ? '1' : '0');
+    var ans = item.querySelector('[data-faq-answer]');
+    var icon = item.querySelector('[data-faq-icon]');
+    if (ans) ans.style.maxHeight = open ? (ans.scrollHeight + 40) + 'px' : '0px';
+    if (icon) icon.style.transform = open ? 'rotate(45deg)' : 'rotate(0deg)';
+    item.style.borderColor = open ? 'rgba(255,132,32,.4)' : '#26262e';
+  }
+
+  /* ------------------------- modal ------------------------- */
+  function openModal() { var m = document.getElementById('er-modal'); if (m) { m.style.display = 'flex'; document.body.style.overflow = 'hidden'; renderQuiz(); } }
+  function closeModal() { var m = document.getElementById('er-modal'); if (m) { m.style.display = 'none'; document.body.style.overflow = ''; } }
+
+  /* ------------------------- scroll to quiz ------------------------- */
+  function scrollToQuiz() {
+    var e = document.getElementById('quiz-card');
+    if (e) { var y = e.getBoundingClientRect().top + window.pageYOffset - 90; window.scrollTo({ top: y, behavior: 'smooth' }); }
+  }
+
+  /* ------------------------- mobile menu ------------------------- */
+  function toggleMenu(force) {
+    var m = document.getElementById('er-mnav');
+    var b = document.querySelector('[data-act="menu"]');
+    if (!m) return;
+    var open = force != null ? force : m.getAttribute('data-open') !== '1';
+    m.setAttribute('data-open', open ? '1' : '0');
+    m.style.display = open ? 'flex' : 'none';
+    if (b) b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  /* ------------------------- delegated events ------------------------- */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-act]');
+    if (!t) return;
+    var act = t.getAttribute('data-act');
+    switch (act) {
+      case 'scroll-quiz': toggleMenu(false); scrollToQuiz(); break;
+      case 'open-modal': openModal(); break;
+      case 'close-modal': closeModal(); break;
+      case 'stop': e.stopPropagation(); break;
+      case 'menu': toggleMenu(); break;
+      case 'menu-link': toggleMenu(false); break;
+      case 'faq': { var item = t.closest('[data-faq-item]'); if (item) faqToggle(item); break; }
+      case 'quiz-answer': qs.answers[t.getAttribute('data-key')] = t.getAttribute('data-label'); qs.step++; renderQuiz(); break;
+      case 'quiz-back': qs.step = Math.max(0, qs.step - 1); renderQuiz(); break;
+      case 'quiz-restart': qs.step = 0; qs.answers = {}; qs.phone = ''; qs.channel = 'Звонок'; renderQuiz(); break;
+      case 'quiz-channel': qs.channel = t.getAttribute('data-channel'); renderQuiz(); break;
+      case 'quiz-submit': {
+        var digits = (qs.phone || '').replace(/\D/g, '');
+        if (digits.length >= 10) { qs.step = STEPS.length + 1; renderQuiz(); }
+        else {
+          var inp = Array.prototype.slice.call(document.querySelectorAll('[data-act="quiz-phone"]')).filter(function (i) { return i.offsetParent !== null; })[0] || document.querySelector('[data-act="quiz-phone"]');
+          if (inp) { inp.style.borderColor = '#ff4a4a'; inp.focus(); }
+        }
+        break;
+      }
+    }
+  });
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (!t || !t.getAttribute) return;
+    var act = t.getAttribute('data-act');
+    if (act === 'quiz-phone') { qs.phone = t.value; }
+    else if (act === 'calc') { var box = t.closest('[data-calc-box]') || document; calcUpdate(box); }
+  });
+  // close modal / menu on ESC
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeModal(); toggleMenu(false); } });
+
+  /* ------------------------- on ready ------------------------- */
+  function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    renderQuiz();
+
+    // fixed header: size the spacer + anchor offset (works across Tilda blocks)
+    var head = document.getElementById('er-head');
+    var spacer = document.getElementById('er-head-spacer');
+    function sizeHead() { if (!head) return; var h = head.offsetHeight; if (spacer) spacer.style.height = h + 'px'; document.documentElement.style.scrollPaddingTop = (h + 10) + 'px'; }
+    sizeHead(); window.addEventListener('resize', sizeHead); setTimeout(sizeHead, 300); window.addEventListener('load', sizeHead);
+
+    // scroll progress + header shadow
+    var bar = document.getElementById('er-progress');
+    var head = document.getElementById('er-head');
+    var onScroll = function () {
+      var de = document.documentElement;
+      var max = de.scrollHeight - de.clientHeight;
+      var y = window.pageYOffset || de.scrollTop;
+      if (bar) bar.style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
+      if (head) head.style.boxShadow = y > 8 ? '0 8px 30px rgba(0,0,0,.55)' : 'none';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+    // reveal on scroll
+    var reveals = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
+    if (!reduce && 'IntersectionObserver' in window) {
+      var idxMap = new Map();
+      reveals.forEach(function (el) {
+        var p = el.parentElement, i = idxMap.get(p) || 0; idxMap.set(p, i + 1);
+        el.style.opacity = '0'; el.style.transform = 'translateY(28px)';
+        el.style.transition = 'opacity .7s cubic-bezier(.4,0,.2,1) ' + (i * 0.07) + 's, transform .7s cubic-bezier(.4,0,.2,1) ' + (i * 0.07) + 's';
+      });
+      var io = new IntersectionObserver(function (ents) {
+        ents.forEach(function (en) { if (en.isIntersecting) { en.target.style.opacity = '1'; en.target.style.transform = 'none'; io.unobserve(en.target); } });
+      }, { threshold: 0.12 });
+      reveals.forEach(function (el) { io.observe(el); });
+    }
+
+    // count up
+    var nums = Array.prototype.slice.call(document.querySelectorAll('[data-count]'));
+    var run = function (el) {
+      var to = parseFloat(el.getAttribute('data-count')), dec = el.getAttribute('data-dec') === '1';
+      var dur = 1300, t0 = performance.now();
+      var tick = function (t) { var p = Math.min(1, (t - t0) / dur), v = to * (1 - Math.pow(1 - p, 3)); el.textContent = dec ? v.toFixed(1).replace('.', ',') : Math.round(v).toString(); if (p < 1) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+    };
+    if (nums.length && !reduce && 'IntersectionObserver' in window) {
+      var io2 = new IntersectionObserver(function (ents) { ents.forEach(function (en) { if (en.isIntersecting) { run(en.target); io2.unobserve(en.target); } }); }, { threshold: 0.5 });
+      nums.forEach(function (el) { io2.observe(el); });
+    } else nums.forEach(run);
+
+    // live "now working" badge
+    var isWorkingNow = function () { var d = new Date(); var msk = new Date(d.getTime() + d.getTimezoneOffset() * 60000 + 3 * 3600000); var day = msk.getDay(), hr = msk.getHours(); return day >= 1 && day <= 5 && hr >= 8 && hr < 17; };
+    var syncLive = function () {
+      var open = isWorkingNow();
+      document.querySelectorAll('[data-live="open"]').forEach(function (el) { el.style.display = open ? '' : 'none'; });
+      document.querySelectorAll('[data-live="closed"]').forEach(function (el) { el.style.display = open ? 'none' : ''; });
+    };
+    syncLive(); setInterval(syncLive, 60000);
+
+    // initialise calculators
+    document.querySelectorAll('[data-calc-box]').forEach(function (box) { calcUpdate(box); });
+  });
+})();
+</script>
