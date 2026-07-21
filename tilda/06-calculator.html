@@ -4,7 +4,7 @@
   <div data-reveal style="max-width:760px;margin-bottom:36px">
     <div style="display:flex;align-items:center;gap:9px;color:var(--org1);font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px"><span style="width:26px;height:2px;background:var(--org1)"></span>Калькулятор</div>
     <h2 style="font-size:clamp(26px,3.4vw,42px);font-weight:900;letter-spacing:-.02em;margin:0;line-height:1.08">Посчитайте стоимость аренды за 10 секунд</h2>
-    <p style="color:var(--mut);font-size:16px;margin:14px 0 0">Двиньте ползунки — увидите примерную цену. Точную посчитаем под объект.</p>
+    <p style="color:var(--mut);font-size:16px;margin:14px 0 0">Двиньте ползунки — увидите примерную цену аренды без учёта доставки на объект. Точную стоимость с доставкой рассчитаем индивидуально под ваш объект.</p>
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:stretch">
     <div data-reveal style="background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:clamp(22px,3vw,34px)">
@@ -24,11 +24,11 @@
       </div>
     </div>
     <div data-reveal style="background:linear-gradient(160deg,#1c1005,#0d0d11);border:1px solid rgba(255,132,32,.45);border-radius:20px;padding:clamp(22px,3vw,34px);display:flex;flex-direction:column;justify-content:center">
-      <div style="font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Примерная стоимость</div>
+      <div style="font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Примерная стоимость (без доставки)</div>
       <div style="font-size:clamp(30px,4vw,44px);font-weight:900;line-height:1;color:#fff"><span data-bind="calcPerDay">3 700</span> ₽<span style="font-size:.4em;font-weight:700;color:var(--mut)"> /сутки</span></div>
       <div style="font-size:16px;color:#cfcfd6;margin-top:10px">За весь срок: <b style="color:#fff">≈ <span data-bind="calcTotal">51 800</span> ₽</b></div>
       <div data-bind="calcDisc" style="display:inline-flex;align-self:flex-start;align-items:center;gap:6px;margin-top:14px;background:rgba(61,214,140,.14);border:1px solid rgba(61,214,140,.4);color:#5ee6a4;font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:100px">Скидка за срок −<span data-bind="calcDiscVal">5%</span></div>
-      <button data-act="scroll-quiz" data-h="h3" style="margin-top:22px;display:inline-flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(0deg,var(--org1),var(--org2));color:#fff;font-weight:800;font-size:16px;padding:16px;border:none;border-radius:12px;cursor:pointer;box-shadow:0 12px 30px rgba(255,90,0,.4);transition:transform .15s">Точный расчёт под объект<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <button data-act="scroll-quiz" data-h="h3" style="margin-top:22px;display:inline-flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(0deg,var(--org1),var(--org2));color:#fff;font-weight:800;font-size:16px;padding:16px;border:none;border-radius:12px;cursor:pointer;box-shadow:0 12px 30px rgba(255,90,0,.4);transition:transform .15s">Узнать точную стоимость с доставкой<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       <div style="font-size:11.5px;color:var(--mut);margin-top:10px;text-align:center">Ответим за 15 минут · без спама и обзвона</div>
     </div>
   </div>
