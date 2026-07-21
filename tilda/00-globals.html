@@ -65,6 +65,14 @@
 .er-revgal-track{scrollbar-width:none;-ms-overflow-style:none}
 .er-revgal-track::-webkit-scrollbar{display:none}
 
+/* ---------------- cases gallery ---------------- */
+.er-case-slide{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(20px,3vw,40px);align-items:center}
+@media(max-width:820px){.er-case-slide{grid-template-columns:1fr;gap:18px}}
+
+/* ---------------- founder word ---------------- */
+.er-fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,4vw,60px);align-items:center}
+@media(max-width:860px){.er-fw-grid{grid-template-columns:1fr;gap:30px}}
+
 /* ---------------- forms / actions ---------------- */
 .er-inp:focus{border-color:var(--org1)!important;outline:none}
 .er-btn-p:hover{transform:translateY(-2px)}
@@ -97,11 +105,12 @@
 [data-h="h13"]:hover{border-color:var(--org1) !important}
 [data-h="h14"]:hover{border-color:rgba(255,132,32,.4) !important}
 [data-h="h15"]:hover{color:#fff !important;border-color:rgba(255,132,32,.45) !important}
-[data-h="h16"]:hover{transform:translateY(-2px) !important;box-shadow:0 18px 46px rgba(255,90,0,.6) !important}
-[data-h="h17"]:hover{transform:translateY(-2px) !important;box-shadow:0 18px 46px rgba(255,90,0,.55) !important}
-[data-h="h18"]:hover{transform:translateY(-4px) !important;border-color:rgba(255,132,32,.4) !important}
-[data-h="h19"]:hover{border-color:var(--org1) !important;color:var(--org1) !important}
-[data-h="h20"]:hover{color:#fff !important;border-color:var(--org1) !important}
+[data-h="h16"]:hover{border-color:var(--org1) !important;color:#fff !important;background:rgba(255,90,0,.12) !important}
+[data-h="h17"]:hover{transform:translateY(-2px) !important;box-shadow:0 18px 46px rgba(255,90,0,.6) !important}
+[data-h="h18"]:hover{transform:translateY(-2px) !important;box-shadow:0 18px 46px rgba(255,90,0,.55) !important}
+[data-h="h19"]:hover{transform:translateY(-4px) !important;border-color:rgba(255,132,32,.4) !important}
+[data-h="h20"]:hover{border-color:var(--org1) !important;color:var(--org1) !important}
+[data-h="h21"]:hover{color:#fff !important;border-color:var(--org1) !important}
 </style>
 <script>
 /* ЭНЕРГОРЕСУРС — единый скрипт интерактива для всех блоков Tilda.
