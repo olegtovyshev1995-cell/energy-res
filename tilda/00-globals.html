@@ -85,8 +85,8 @@
 [data-h="h2"]:hover{transform:translateY(-2px) !important;box-shadow:0 12px 30px rgba(255,90,0,.5) !important}
 [data-h="h3"]:hover{transform:translateY(-2px) !important}
 [data-h="h4"]:hover{transform:scale(1.08) !important}
-[data-h="h5"]:hover{border-color:var(--org1) !important;color:#fff !important}
-[data-h="h6"]:hover{transform:translateY(-2px) !important;box-shadow:0 16px 40px rgba(255,90,0,.55) !important}
+[data-h="h5"]:hover{transform:translateY(-2px) !important;box-shadow:0 16px 40px rgba(255,90,0,.55) !important}
+[data-h="h6"]:hover{border-color:var(--org1) !important;color:#fff !important}
 [data-h="h7"]:hover{transform:translateY(-3px) scale(1.03) !important;box-shadow:0 18px 42px rgba(255,90,0,.65) !important}
 [data-hf="f1"]:focus{border-color:var(--org1) !important;outline:none !important}
 [data-h="h8"]:hover{animation-play-state:paused !important}
@@ -292,8 +292,16 @@
     if (f) f.style.display = ''; if (d) d.style.display = 'none';
     var ph = m.querySelector('[data-price-phone]'); if (ph) { ph.value = ''; ph.style.borderColor = ''; }
   }
-  function openPrice() { var m = document.getElementById('er-price-modal'); if (m) { resetPrice(); fillPrice(m); m.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
+  function openPrice() { var d = document.getElementById('er-detail-modal'); if (d) d.style.display = 'none'; var m = document.getElementById('er-price-modal'); if (m) { resetPrice(); fillPrice(m); m.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
   function closePrice() { var m = document.getElementById('er-price-modal'); if (m) { m.style.display = 'none'; document.body.style.overflow = ''; } }
+  function openDetail(kw) {
+    var m = document.getElementById('er-detail-modal'); if (!m) return;
+    var panels = m.querySelectorAll('[data-detail]');
+    for (var i = 0; i < panels.length; i++) { panels[i].style.display = (panels[i].getAttribute('data-detail') === String(kw)) ? 'block' : 'none'; }
+    var inner = m.querySelector('[data-act="stop"]'); if (inner) inner.scrollTop = 0;
+    m.scrollTop = 0; m.style.display = 'flex'; document.body.style.overflow = 'hidden';
+  }
+  function closeDetail() { var m = document.getElementById('er-detail-modal'); if (m) { m.style.display = 'none'; document.body.style.overflow = ''; } }
   function submitPrice(scope) {
     var ph = scope.querySelector('[data-price-phone]');
     var digits = (ph ? ph.value : '').replace(/\D/g, '');
@@ -339,6 +347,8 @@
       case 'price-submit': submitPrice(t.closest('[data-price-scope]') || document); break;
       case 'open-call': toggleMenu(false); openCall(); break;
       case 'close-call': closeCall(); break;
+      case 'open-detail': toggleMenu(false); openDetail(t.getAttribute('data-kw')); break;
+      case 'close-detail': closeDetail(); break;
       case 'call-submit': submitCall(); break;
       case 'email-submit': submitEmail(t.closest('[data-email-scope]') || document); break;
       case 'stop': e.stopPropagation(); break;
@@ -374,7 +384,7 @@
     else if (t.hasAttribute && (t.hasAttribute('data-price-power') || t.hasAttribute('data-price-term'))) { t.setAttribute('data-touched', '1'); }
   });
   // close popups / menu on ESC
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closePrice(); closeCall(); toggleMenu(false); } });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closePrice(); closeCall(); closeDetail(); toggleMenu(false); } });
 
   /* ------------------------- on ready ------------------------- */
   function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
