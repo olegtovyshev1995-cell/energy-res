@@ -443,10 +443,92 @@
     if (p && mapTip) mapTip.classList.remove('on');
   });
 
+  /* ------------------------- геолендинг: подмена региона ------------------------- */
+  var GEO_DEFAULT = { hdr: 'Самара и область', in: 'Самаре' };
+  var GEO = {
+    'samara': { hdr: 'Самара и область', in: 'Самаре' },
+    'moscow': { hdr: 'Москва и область', in: 'Москве' },
+    'saint petersburg': { hdr: 'Санкт-Петербург и ЛО', in: 'Санкт-Петербурге' }, 'st. petersburg': { hdr: 'Санкт-Петербург и ЛО', in: 'Санкт-Петербурге' }, 'leningrad': { hdr: 'Санкт-Петербург и ЛО', in: 'Санкт-Петербурге' },
+    'krasnodar': { hdr: 'Краснодарский край', in: 'Краснодаре' },
+    'rostov': { hdr: 'Ростовская область', in: 'Ростове-на-Дону' },
+    'sverdlovsk': { hdr: 'Свердловская область', in: 'Екатеринбурге' },
+    'novosibirsk': { hdr: 'Новосибирская область', in: 'Новосибирске' },
+    'tatarstan': { hdr: 'Республика Татарстан', in: 'Казани' },
+    'bashkortostan': { hdr: 'Республика Башкортостан', in: 'Уфе' },
+    'chelyabinsk': { hdr: 'Челябинская область', in: 'Челябинске' },
+    'nizhny novgorod': { hdr: 'Нижегородская область', in: 'Нижнем Новгороде' }, 'nizhny novgorod ': { hdr: 'Нижегородская область', in: 'Нижнем Новгороде' },
+    'omsk': { hdr: 'Омская область', in: 'Омске' },
+    'krasnoyarsk': { hdr: 'Красноярский край', in: 'Красноярске' },
+    'perm': { hdr: 'Пермский край', in: 'Перми' },
+    'voronezh': { hdr: 'Воронежская область', in: 'Воронеже' },
+    'volgograd': { hdr: 'Волгоградская область', in: 'Волгограде' },
+    'saratov': { hdr: 'Саратовская область', in: 'Саратове' },
+    'tyumen': { hdr: 'Тюменская область', in: 'Тюмени' },
+    'stavropol': { hdr: 'Ставропольский край', in: 'Ставрополе' },
+    'irkutsk': { hdr: 'Иркутская область', in: 'Иркутске' },
+    'kemerovo': { hdr: 'Кемеровская область', in: 'Кемерове' }, 'kuzbass': { hdr: 'Кемеровская область', in: 'Кемерове' },
+    'ulyanovsk': { hdr: 'Ульяновская область', in: 'Ульяновске' },
+    'penza': { hdr: 'Пензенская область', in: 'Пензе' },
+    'orenburg': { hdr: 'Оренбургская область', in: 'Оренбурге' },
+    'tomsk': { hdr: 'Томская область', in: 'Томске' },
+    'astrakhan': { hdr: 'Астраханская область', in: 'Астрахани' },
+    'kirov': { hdr: 'Кировская область', in: 'Кирове' },
+    'udmurt': { hdr: 'Удмуртская Республика', in: 'Ижевске' }, 'udmurtia': { hdr: 'Удмуртская Республика', in: 'Ижевске' },
+    'khabarovsk': { hdr: 'Хабаровский край', in: 'Хабаровске' },
+    'primorsky': { hdr: 'Приморский край', in: 'Владивостоке' }, 'primorye': { hdr: 'Приморский край', in: 'Владивостоке' },
+    'sakha': { hdr: 'Республика Саха (Якутия)', in: 'Якутске' }, 'yakutia': { hdr: 'Республика Саха (Якутия)', in: 'Якутске' }, 'sakha yakutia': { hdr: 'Республика Саха (Якутия)', in: 'Якутске' },
+    'amur': { hdr: 'Амурская область', in: 'Благовещенске' },
+    'sakhalin': { hdr: 'Сахалинская область', in: 'Южно-Сахалинске' },
+    'magadan': { hdr: 'Магаданская область', in: 'Магадане' },
+    'kamchatka': { hdr: 'Камчатский край', in: 'Петропавловске-Камчатском' },
+    'chukotka': { hdr: 'Чукотский АО', in: 'Анадыре' },
+    'buryatia': { hdr: 'Республика Бурятия', in: 'Улан-Удэ' },
+    'zabaykalsky': { hdr: 'Забайкальский край', in: 'Чите' }, 'transbaikal': { hdr: 'Забайкальский край', in: 'Чите' },
+    'altai': { hdr: 'Алтайский край', in: 'Барнауле' },
+    'kurgan': { hdr: 'Курганская область', in: 'Кургане' },
+    'khanty-mansi': { hdr: 'Ханты-Мансийский АО', in: 'Сургуте' }, 'khanty-mansia': { hdr: 'Ханты-Мансийский АО', in: 'Сургуте' },
+    'yamalo-nenets': { hdr: 'Ямало-Ненецкий АО', in: 'Новом Уренгое' }, 'yamalo': { hdr: 'Ямало-Ненецкий АО', in: 'Новом Уренгое' },
+    'arkhangelsk': { hdr: 'Архангельская область', in: 'Архангельске' },
+    'komi': { hdr: 'Республика Коми', in: 'Сыктывкаре' },
+    'mordovia': { hdr: 'Республика Мордовия', in: 'Саранске' },
+    'mari el': { hdr: 'Республика Марий Эл', in: 'Йошкар-Оле' }, 'mariy-el': { hdr: 'Республика Марий Эл', in: 'Йошкар-Оле' },
+    'chuvash': { hdr: 'Чувашская Республика', in: 'Чебоксарах' }, 'chuvashia': { hdr: 'Чувашская Республика', in: 'Чебоксарах' },
+    'belgorod': { hdr: 'Белгородская область', in: 'Белгороде' },
+    'lipetsk': { hdr: 'Липецкая область', in: 'Липецке' },
+    'tambov': { hdr: 'Тамбовская область', in: 'Тамбове' }
+  };
+  var GEO_CITY = { 'yekaterinburg': 'sverdlovsk', 'ekaterinburg': 'sverdlovsk', 'kazan': 'tatarstan', 'ufa': 'bashkortostan', 'rostov-on-don': 'rostov', 'vladivostok': 'primorsky', 'yakutsk': 'sakha', 'nizhny novgorod': 'nizhny novgorod', 'surgut': 'khanty-mansi', 'novy urengoy': 'yamalo-nenets', 'ulan-ude': 'buryatia', 'izhevsk': 'udmurt', 'cheboksary': 'chuvash', 'barnaul': 'altai', 'syktyvkar': 'komi', 'saransk': 'mordovia', 'yoshkar-ola': 'mari el' };
+  function normReg(s) { s = (s || '').toLowerCase().replace(/[()]/g, ' '); s = s.replace(/\b(oblast|kray|krai|republic|region|autonomous okrug|okrug|city|respublika)\b/g, ' '); s = s.replace(/republic of/g, ' ').replace(/\s+/g, ' ').trim(); return s; }
+  function resolveGeo(region, city) {
+    var k = normReg(region); if (GEO[k]) return GEO[k];
+    var c = (city || '').toLowerCase().trim(); if (GEO_CITY[c] && GEO[GEO_CITY[c]]) return GEO[GEO_CITY[c]]; if (GEO[c]) return GEO[c];
+    return null;
+  }
+  function applyGeo(g) {
+    if (!g) return;
+    var a = document.querySelectorAll('[data-geo-hdr]'); for (var i = 0; i < a.length; i++) a[i].textContent = g.hdr;
+    var b = document.querySelectorAll('[data-geo-in]'); for (var j = 0; j < b.length; j++) b[j].textContent = g.in;
+  }
+  function geoFetchJSON(url, ok, err) {
+    try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.timeout = 4500; x.onreadystatechange = function () { if (x.readyState === 4) { if (x.status >= 200 && x.status < 300) { try { ok(JSON.parse(x.responseText)); } catch (e) { err && err(); } } else err && err(); } }; x.ontimeout = function () { err && err(); }; x.onerror = function () { err && err(); }; x.send(); } catch (e) { err && err(); }
+  }
+  function geoInit() {
+    try {
+      var q = null; try { q = new URLSearchParams(location.search).get('geo'); } catch (e) {}
+      if (q) { var gq = resolveGeo(q, q); if (gq) { applyGeo(gq); return; } }
+      try { var cs = localStorage.getItem('er_geo'); if (cs) { var o = JSON.parse(cs); if (o && o.t && (Date.now() - o.t) < 7 * 864e5 && o.g) { applyGeo(o.g); return; } } } catch (e) {}
+      var done = false;
+      var handle = function (region, city) { if (done) return; done = true; var g = resolveGeo(region, city); if (g) { applyGeo(g); try { localStorage.setItem('er_geo', JSON.stringify({ t: Date.now(), g: g })); } catch (e) {} } };
+      var fallback = function () { if (done) return; geoFetchJSON('https://get.geojs.io/v1/ip/geo.json', function (d) { if (d) handle(d.region, d.city); }, function () {}); };
+      geoFetchJSON('https://ipwho.is/', function (d) { if (d && d.success !== false && (d.country_code === 'RU' || d.country === 'Russia')) handle(d.region, d.city); else fallback(); }, fallback);
+    } catch (e) {}
+  }
+
   /* ------------------------- on ready ------------------------- */
   function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
   ready(function () {
     renderQuiz();
+    geoInit();
 
     // fixed header: size the spacer + anchor offset (works across Tilda blocks)
     var head = document.getElementById('er-head');
@@ -521,7 +603,7 @@
       <a href="#top" class="er-logo" style="display:flex;align-items:center;flex:none"><img src="https://static.tildacdn.com/tild3364-3166-4238-b839-643339323133/er-logo-main160i_1_1.png" alt="ЭНЕРГОРЕСУРС" style="height:34px;width:auto;display:block"></a>
       <div class="er-region" style="display:flex;align-items:center;gap:8px;color:#cfcfd6;font-size:15px;font-weight:600;flex:none;border-left:1px solid var(--line);padding-left:18px">
         <svg viewBox="0 0 24 24" fill="none" stroke="var(--org1)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;flex:none"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
-        Самара и область
+        <span data-geo-hdr>Самара и область</span>
       </div>
     </div>
     <div class="er-phone-wrap">
@@ -560,8 +642,8 @@
   <div style="position:absolute;top:-180px;right:-120px;width:720px;height:720px;background:radial-gradient(circle,rgba(255,90,0,.3),transparent 62%);z-index:0;pointer-events:none;animation:erglow 8s ease-in-out infinite"></div>
   <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:clamp(38px,5.5vw,80px) 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:44px;align-items:center">
     <div>
-      <div style="display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(255,132,32,.4);background:rgba(255,90,0,.08);border-radius:100px;padding:7px 15px;font-size:12.5px;font-weight:600;letter-spacing:.02em;color:#ffb066;margin-bottom:22px"><span style="width:8px;height:8px;border-radius:50%;background:var(--org1);animation:erpulse 1.8s ease-in-out infinite"></span>Самара и область · подача от 2 часов</div>
-      <h1 style="font-size:clamp(30px,4.4vw,52px);font-weight:900;line-height:1.06;letter-spacing:-.02em;margin:0 0 20px;text-transform:uppercase">Аренда генераторов 30–500 кВт в Самаре — <span style="color:transparent;background:linear-gradient(0deg,var(--org1),var(--org2));-webkit-background-clip:text;background-clip:text">подача от 2 часов, без залога</span></h1>
+      <div style="display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(255,132,32,.4);background:rgba(255,90,0,.08);border-radius:100px;padding:7px 15px;font-size:12.5px;font-weight:600;letter-spacing:.02em;color:#ffb066;margin-bottom:22px"><span style="width:8px;height:8px;border-radius:50%;background:var(--org1);animation:erpulse 1.8s ease-in-out infinite"></span><span data-geo-hdr>Самара и область</span> · подача от 2 часов</div>
+      <h1 style="font-size:clamp(30px,4.4vw,52px);font-weight:900;line-height:1.06;letter-spacing:-.02em;margin:0 0 20px;text-transform:uppercase">Аренда генераторов 30–500 кВт в <span data-geo-in>Самаре</span> — <span style="color:transparent;background:linear-gradient(0deg,var(--org1),var(--org2));-webkit-background-clip:text;background-clip:text">подача от 2 часов, без залога</span></h1>
       <p style="font-size:clamp(16px,1.5vw,18px);color:#c5c5cc;max-width:560px;margin:0 0 24px">Привезём, подключим и запустим под нагрузкой. Откажет станция — заменим за свой счёт. Вы занимаетесь работой, а не поиском электричества.</p>
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:14px">
         <button data-act="open-price" style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(0deg,var(--org1),var(--org2));color:#fff;font-weight:800;font-size:17px;padding:16px 28px;border:none;border-radius:12px;cursor:pointer;box-shadow:0 14px 34px rgba(255,90,0,.42);transition:transform .15s,box-shadow .15s" data-h="h1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none"><path d="M3 7h11v8H3z"/><path d="M14 10h4l3 3v2h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/></svg>Узнать цену с доставкой</button>

@@ -430,10 +430,92 @@
     if (p && mapTip) mapTip.classList.remove('on');
   });
 
+  /* ------------------------- геолендинг: подмена региона ------------------------- */
+  var GEO_DEFAULT = { hdr: 'Самара и область', in: 'Самаре' };
+  var GEO = {
+    'samara': { hdr: 'Самара и область', in: 'Самаре' },
+    'moscow': { hdr: 'Москва и область', in: 'Москве' },
+    'saint petersburg': { hdr: 'Санкт-Петербург и ЛО', in: 'Санкт-Петербурге' }, 'st. petersburg': { hdr: 'Санкт-Петербург и ЛО', in: 'Санкт-Петербурге' }, 'leningrad': { hdr: 'Санкт-Петербург и ЛО', in: 'Санкт-Петербурге' },
+    'krasnodar': { hdr: 'Краснодарский край', in: 'Краснодаре' },
+    'rostov': { hdr: 'Ростовская область', in: 'Ростове-на-Дону' },
+    'sverdlovsk': { hdr: 'Свердловская область', in: 'Екатеринбурге' },
+    'novosibirsk': { hdr: 'Новосибирская область', in: 'Новосибирске' },
+    'tatarstan': { hdr: 'Республика Татарстан', in: 'Казани' },
+    'bashkortostan': { hdr: 'Республика Башкортостан', in: 'Уфе' },
+    'chelyabinsk': { hdr: 'Челябинская область', in: 'Челябинске' },
+    'nizhny novgorod': { hdr: 'Нижегородская область', in: 'Нижнем Новгороде' }, 'nizhny novgorod ': { hdr: 'Нижегородская область', in: 'Нижнем Новгороде' },
+    'omsk': { hdr: 'Омская область', in: 'Омске' },
+    'krasnoyarsk': { hdr: 'Красноярский край', in: 'Красноярске' },
+    'perm': { hdr: 'Пермский край', in: 'Перми' },
+    'voronezh': { hdr: 'Воронежская область', in: 'Воронеже' },
+    'volgograd': { hdr: 'Волгоградская область', in: 'Волгограде' },
+    'saratov': { hdr: 'Саратовская область', in: 'Саратове' },
+    'tyumen': { hdr: 'Тюменская область', in: 'Тюмени' },
+    'stavropol': { hdr: 'Ставропольский край', in: 'Ставрополе' },
+    'irkutsk': { hdr: 'Иркутская область', in: 'Иркутске' },
+    'kemerovo': { hdr: 'Кемеровская область', in: 'Кемерове' }, 'kuzbass': { hdr: 'Кемеровская область', in: 'Кемерове' },
+    'ulyanovsk': { hdr: 'Ульяновская область', in: 'Ульяновске' },
+    'penza': { hdr: 'Пензенская область', in: 'Пензе' },
+    'orenburg': { hdr: 'Оренбургская область', in: 'Оренбурге' },
+    'tomsk': { hdr: 'Томская область', in: 'Томске' },
+    'astrakhan': { hdr: 'Астраханская область', in: 'Астрахани' },
+    'kirov': { hdr: 'Кировская область', in: 'Кирове' },
+    'udmurt': { hdr: 'Удмуртская Республика', in: 'Ижевске' }, 'udmurtia': { hdr: 'Удмуртская Республика', in: 'Ижевске' },
+    'khabarovsk': { hdr: 'Хабаровский край', in: 'Хабаровске' },
+    'primorsky': { hdr: 'Приморский край', in: 'Владивостоке' }, 'primorye': { hdr: 'Приморский край', in: 'Владивостоке' },
+    'sakha': { hdr: 'Республика Саха (Якутия)', in: 'Якутске' }, 'yakutia': { hdr: 'Республика Саха (Якутия)', in: 'Якутске' }, 'sakha yakutia': { hdr: 'Республика Саха (Якутия)', in: 'Якутске' },
+    'amur': { hdr: 'Амурская область', in: 'Благовещенске' },
+    'sakhalin': { hdr: 'Сахалинская область', in: 'Южно-Сахалинске' },
+    'magadan': { hdr: 'Магаданская область', in: 'Магадане' },
+    'kamchatka': { hdr: 'Камчатский край', in: 'Петропавловске-Камчатском' },
+    'chukotka': { hdr: 'Чукотский АО', in: 'Анадыре' },
+    'buryatia': { hdr: 'Республика Бурятия', in: 'Улан-Удэ' },
+    'zabaykalsky': { hdr: 'Забайкальский край', in: 'Чите' }, 'transbaikal': { hdr: 'Забайкальский край', in: 'Чите' },
+    'altai': { hdr: 'Алтайский край', in: 'Барнауле' },
+    'kurgan': { hdr: 'Курганская область', in: 'Кургане' },
+    'khanty-mansi': { hdr: 'Ханты-Мансийский АО', in: 'Сургуте' }, 'khanty-mansia': { hdr: 'Ханты-Мансийский АО', in: 'Сургуте' },
+    'yamalo-nenets': { hdr: 'Ямало-Ненецкий АО', in: 'Новом Уренгое' }, 'yamalo': { hdr: 'Ямало-Ненецкий АО', in: 'Новом Уренгое' },
+    'arkhangelsk': { hdr: 'Архангельская область', in: 'Архангельске' },
+    'komi': { hdr: 'Республика Коми', in: 'Сыктывкаре' },
+    'mordovia': { hdr: 'Республика Мордовия', in: 'Саранске' },
+    'mari el': { hdr: 'Республика Марий Эл', in: 'Йошкар-Оле' }, 'mariy-el': { hdr: 'Республика Марий Эл', in: 'Йошкар-Оле' },
+    'chuvash': { hdr: 'Чувашская Республика', in: 'Чебоксарах' }, 'chuvashia': { hdr: 'Чувашская Республика', in: 'Чебоксарах' },
+    'belgorod': { hdr: 'Белгородская область', in: 'Белгороде' },
+    'lipetsk': { hdr: 'Липецкая область', in: 'Липецке' },
+    'tambov': { hdr: 'Тамбовская область', in: 'Тамбове' }
+  };
+  var GEO_CITY = { 'yekaterinburg': 'sverdlovsk', 'ekaterinburg': 'sverdlovsk', 'kazan': 'tatarstan', 'ufa': 'bashkortostan', 'rostov-on-don': 'rostov', 'vladivostok': 'primorsky', 'yakutsk': 'sakha', 'nizhny novgorod': 'nizhny novgorod', 'surgut': 'khanty-mansi', 'novy urengoy': 'yamalo-nenets', 'ulan-ude': 'buryatia', 'izhevsk': 'udmurt', 'cheboksary': 'chuvash', 'barnaul': 'altai', 'syktyvkar': 'komi', 'saransk': 'mordovia', 'yoshkar-ola': 'mari el' };
+  function normReg(s) { s = (s || '').toLowerCase().replace(/[()]/g, ' '); s = s.replace(/\b(oblast|kray|krai|republic|region|autonomous okrug|okrug|city|respublika)\b/g, ' '); s = s.replace(/republic of/g, ' ').replace(/\s+/g, ' ').trim(); return s; }
+  function resolveGeo(region, city) {
+    var k = normReg(region); if (GEO[k]) return GEO[k];
+    var c = (city || '').toLowerCase().trim(); if (GEO_CITY[c] && GEO[GEO_CITY[c]]) return GEO[GEO_CITY[c]]; if (GEO[c]) return GEO[c];
+    return null;
+  }
+  function applyGeo(g) {
+    if (!g) return;
+    var a = document.querySelectorAll('[data-geo-hdr]'); for (var i = 0; i < a.length; i++) a[i].textContent = g.hdr;
+    var b = document.querySelectorAll('[data-geo-in]'); for (var j = 0; j < b.length; j++) b[j].textContent = g.in;
+  }
+  function geoFetchJSON(url, ok, err) {
+    try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.timeout = 4500; x.onreadystatechange = function () { if (x.readyState === 4) { if (x.status >= 200 && x.status < 300) { try { ok(JSON.parse(x.responseText)); } catch (e) { err && err(); } } else err && err(); } }; x.ontimeout = function () { err && err(); }; x.onerror = function () { err && err(); }; x.send(); } catch (e) { err && err(); }
+  }
+  function geoInit() {
+    try {
+      var q = null; try { q = new URLSearchParams(location.search).get('geo'); } catch (e) {}
+      if (q) { var gq = resolveGeo(q, q); if (gq) { applyGeo(gq); return; } }
+      try { var cs = localStorage.getItem('er_geo'); if (cs) { var o = JSON.parse(cs); if (o && o.t && (Date.now() - o.t) < 7 * 864e5 && o.g) { applyGeo(o.g); return; } } } catch (e) {}
+      var done = false;
+      var handle = function (region, city) { if (done) return; done = true; var g = resolveGeo(region, city); if (g) { applyGeo(g); try { localStorage.setItem('er_geo', JSON.stringify({ t: Date.now(), g: g })); } catch (e) {} } };
+      var fallback = function () { if (done) return; geoFetchJSON('https://get.geojs.io/v1/ip/geo.json', function (d) { if (d) handle(d.region, d.city); }, function () {}); };
+      geoFetchJSON('https://ipwho.is/', function (d) { if (d && d.success !== false && (d.country_code === 'RU' || d.country === 'Russia')) handle(d.region, d.city); else fallback(); }, fallback);
+    } catch (e) {}
+  }
+
   /* ------------------------- on ready ------------------------- */
   function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
   ready(function () {
     renderQuiz();
+    geoInit();
 
     // fixed header: size the spacer + anchor offset (works across Tilda blocks)
     var head = document.getElementById('er-head');
