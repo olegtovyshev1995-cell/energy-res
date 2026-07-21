@@ -73,6 +73,22 @@
 .er-fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,4vw,60px);align-items:center}
 @media(max-width:860px){.er-fw-grid{grid-template-columns:1fr;gap:30px}}
 
+/* ---------------- Russia supply map ---------------- */
+.er-rf-map{position:relative;width:100%;border:1px solid var(--line);border-radius:20px;background:radial-gradient(120% 120% at 50% 0,rgba(255,90,0,.06),#0c0c10);padding:clamp(10px,2vw,24px)}
+.er-rf-map svg{width:100%;height:auto;display:block;overflow:visible}
+.er-regs path{fill:#181820;stroke:#0a0a0d;stroke-width:.5;transition:fill .2s}
+.er-regs path.on{fill:url(#ermapg)}
+.er-regs path:hover{fill:#ffc48a;cursor:pointer}
+.er-regs path.on:hover{fill:#ff7b1a}
+.er-mks{pointer-events:none}
+.er-mk-ring{fill:none;stroke:#ff8420;stroke-width:2;transform-box:fill-box;transform-origin:center;animation:ermkpulse 2.6s ease-out infinite;animation-delay:var(--d)}
+@keyframes ermkpulse{0%{opacity:.8;transform:scale(.2)}70%,100%{opacity:0;transform:scale(1.6)}}
+.er-pin{transform-box:fill-box;transform-origin:bottom center;filter:drop-shadow(0 3px 4px rgba(0,0,0,.55))}
+.er-pin-drop{}
+.er-map-tip{position:fixed;left:0;top:0;z-index:9700;pointer-events:none;background:rgba(10,10,13,.96);border:1px solid var(--org1);color:#fff;font-size:13px;font-weight:600;padding:7px 12px;border-radius:9px;opacity:0;transform:translate(-50%,calc(-100% - 12px));transition:opacity .12s;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.er-map-tip.on{opacity:1}
+@media(prefers-reduced-motion:reduce){.er-mk-ring{animation:none;opacity:.5;transform:scale(.6)}}
+
 /* ---------------- forms / actions ---------------- */
 .er-inp:focus{border-color:var(--org1)!important;outline:none}
 .er-btn-p:hover{transform:translateY(-2px)}
@@ -394,6 +410,25 @@
   });
   // close popups / menu on ESC
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closePrice(); closeCall(); closeDetail(); toggleMenu(false); } });
+
+  // Russia supply map: hover tooltip with region name
+  var mapTip = null;
+  function ensureMapTip() { if (!mapTip) { mapTip = document.createElement('div'); mapTip.className = 'er-map-tip'; document.body.appendChild(mapTip); } return mapTip; }
+  document.addEventListener('mouseover', function (e) {
+    var p = e.target && e.target.closest ? e.target.closest('.er-regs path[data-id]') : null;
+    if (!p) return;
+    var t = ensureMapTip();
+    var nm = p.getAttribute('data-name') || '';
+    t.textContent = p.getAttribute('data-d') ? ('✓ ' + nm + ' · поставлен генератор') : nm;
+    t.classList.add('on');
+  });
+  document.addEventListener('mousemove', function (e) {
+    if (mapTip && mapTip.classList.contains('on')) { mapTip.style.left = e.clientX + 'px'; mapTip.style.top = e.clientY + 'px'; }
+  });
+  document.addEventListener('mouseout', function (e) {
+    var p = e.target && e.target.closest ? e.target.closest('.er-regs path[data-id]') : null;
+    if (p && mapTip) mapTip.classList.remove('on');
+  });
 
   /* ------------------------- on ready ------------------------- */
   function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
