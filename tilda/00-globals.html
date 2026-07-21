@@ -57,6 +57,14 @@
   .er-hero-gen{max-height:240px!important}
 }
 
+/* ---------------- catalog photo gallery ---------------- */
+.er-cargal-track{scrollbar-width:none;-ms-overflow-style:none}
+.er-cargal-track::-webkit-scrollbar{display:none}
+.er-cargal-arrow{opacity:.8}
+.er-cargal-arrow:hover{opacity:1;background:rgba(255,90,0,.85)!important}
+.er-revgal-track{scrollbar-width:none;-ms-overflow-style:none}
+.er-revgal-track::-webkit-scrollbar{display:none}
+
 /* ---------------- forms / actions ---------------- */
 .er-inp:focus{border-color:var(--org1)!important;outline:none}
 .er-btn-p:hover{transform:translateY(-2px)}
@@ -336,6 +344,11 @@
       case 'stop': e.stopPropagation(); break;
       case 'menu': toggleMenu(); break;
       case 'menu-link': toggleMenu(false); break;
+      case 'cargal-prev': case 'cargal-next': {
+        var gal = t.closest('[data-cargal]');
+        if (gal) { var tr = gal.querySelector('[data-cargal-track]'); if (tr) tr.scrollBy({ left: (act === 'cargal-next' ? 1 : -1) * tr.clientWidth, behavior: 'smooth' }); }
+        break;
+      }
       case 'faq': { var item = t.closest('[data-faq-item]'); if (item) faqToggle(item); break; }
       case 'quiz-answer': qs.answers[t.getAttribute('data-key')] = t.getAttribute('data-label'); qs.step++; renderQuiz(); break;
       case 'quiz-back': qs.step = Math.max(0, qs.step - 1); renderQuiz(); break;
