@@ -384,6 +384,11 @@
         if (gal) { var tr = gal.querySelector('[data-cargal-track]'); if (tr) tr.scrollBy({ left: (act === 'cargal-next' ? 1 : -1) * tr.clientWidth, behavior: 'smooth' }); }
         break;
       }
+      case 'revgal-next': {
+        var sec = t.closest('[data-reveal]');
+        if (sec) { var rt = sec.querySelector('.er-revgal-track'); if (rt) rt.scrollBy({ left: Math.round(rt.clientWidth * 0.9), behavior: 'smooth' }); }
+        break;
+      }
       case 'faq': { var item = t.closest('[data-faq-item]'); if (item) faqToggle(item); break; }
       case 'quiz-answer': qs.answers[t.getAttribute('data-key')] = t.getAttribute('data-label'); qs.step++; renderQuiz(); break;
       case 'quiz-back': qs.step = Math.max(0, qs.step - 1); renderQuiz(); break;
