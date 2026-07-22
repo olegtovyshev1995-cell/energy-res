@@ -1,0 +1,390 @@
+<!-- ЭНЕРГОРЕСУРС · Блок 32 — КУРСОР-МОЛНИЯ · вставлять последним, перед </body> -->
+<!-- Tilda: Настройки сайта → «Ещё» → HTML-код внутри <body>. Скрипт самодостаточный. -->
+<script>window.ENERGORES_CURSOR = { accent: '#ff6a00', body: '#ff8420', core: '#fff3e0' };</script>
+<script>
+/* =============================================================================
+ * ЭНЕРГОРЕСУРС · Курсор-молния (energores-cursor.js)
+ * -----------------------------------------------------------------------------
+ * Фирменный эффект: оранжевый электрический разряд следует за курсором.
+ * Vanilla JS, IIFE, самоинициализируется, зависимостей нет.
+ * Сам создаёт полноэкранный <canvas> (pointer-events:none) поверх страницы —
+ * клики, формы, tel:, ссылки продолжают работать как раньше.
+ *
+ * Конфиг — до загрузки скрипта:  window.ENERGORES_CURSOR = { accent:'#FF6A00', ... }
+ * Публичный API после init:      window.EnergoresCursor.pause() / .resume() / .config
+ * ========================================================================== */
+(function () {
+  'use strict';
+
+  // --- защита от повторной инициализации (если тег вставлен дважды) ---------
+  if (window.__energoresCursorInit) return;
+  window.__energoresCursorInit = true;
+
+  // --- конфиг: дефолты + пользовательские значения --------------------------
+  var user = window.ENERGORES_CURSOR || {};
+  var CFG = {
+    accent: '#FF6A00',       // тело разряда — фирменный оранжевый
+    body: '#FF8C1A',         // оранжевый для гало ветвей
+    core: '#FFF3E0',         // ядро молнии, почти белое
+    branchProb: 0.28,        // вероятность ветвления (0–0.6); держать ≤ ~0.35
+    jitter: 11,              // амплитуда изломанности, px
+    mainW: 2.1,              // толщина основного разряда
+    branchW: 1.1,            // толщина ветвей
+    clickDecay: 0.06,        // скорость затухания вспышки при клике/тапе
+    minGap: 16,              // зазор ядер в покое
+    maxStretch: 190,         // потолок растяжения молнии по скорости
+    zIndex: 9999,            // слой canvas
+    clickableSelector: 'a,button,[role="button"],input,textarea,select,label,.er-btn-p,[data-act]',
+    pauseWhenVisible: null,  // селектор — пауза, пока элемент в вьюпорте (для 3D)
+    lowPowerBranches: false  // true — разряд без ветвления (слабые устройства)
+  };
+  for (var k in user) { if (user.hasOwnProperty(k)) CFG[k] = user[k]; }
+
+  // --- окружение ------------------------------------------------------------
+  var mq = window.matchMedia || function () { return { matches: false, addListener: function () {} }; };
+  var finePointer = mq('(pointer: fine)').matches && mq('(hover: hover)').matches;
+  var reduceMotion = mq('(prefers-reduced-motion: reduce)').matches;
+  var isTouch = false; // переключимся в тач-режим при первом касании
+
+  // =========================================================================
+  //  CANVAS
+  // =========================================================================
+  var canvas = document.createElement('canvas');
+  canvas.setAttribute('aria-hidden', 'true');
+  var s = canvas.style;
+  s.position = 'fixed';
+  s.left = '0'; s.top = '0';
+  s.width = '100%'; s.height = '100%';
+  s.pointerEvents = 'none';            // КРИТИЧНО: не перехватывать клики
+  s.zIndex = String(CFG.zIndex);
+  s.mixBlendMode = 'screen';           // разряд светится поверх тёмного фона
+  var ctx = canvas.getContext('2d');
+  var W = 0, H = 0, DPR = 1;
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2); // потолок DPR = 2 (перф)
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+
+  // =========================================================================
+  //  CSS: скрыть системный курсор только на десктопе (класс на <html>),
+  //  но вернуть текстовый курсор в полях и pointer на кликабельных.
+  // =========================================================================
+  function injectCSS() {
+    var css = document.createElement('style');
+    css.textContent =
+      'html.enc-fine, html.enc-fine *{cursor:none !important;}' +
+      'html.enc-fine input,html.enc-fine textarea,html.enc-fine select,' +
+      'html.enc-fine [contenteditable],html.enc-fine [contenteditable] *{cursor:text !important;}' +
+      'html.enc-fine a,html.enc-fine button,html.enc-fine [role="button"],' +
+      'html.enc-fine label,html.enc-fine [data-act]{cursor:pointer !important;}' +
+      'html.enc-fine input[type="range"]{cursor:pointer !important;}';
+    (document.head || document.documentElement).appendChild(css);
+  }
+
+  // =========================================================================
+  //  СОСТОЯНИЕ
+  // =========================================================================
+  var mouse = { x: W / 2, y: H / 2 };  // цель (реальный указатель)
+  var head = { x: W / 2, y: H / 2 };   // сглаженная голова разряда
+  var prev = { x: W / 2, y: H / 2 };
+  var restAngle = 0;                   // «дыхание» ядер в покое
+  var restPhase = 0;
+  var hoverBoost = 0;                  // 0..1 — усиление при наведении на кнопку
+  var flash = 0;                       // 0..1 — вспышка клика/тапа
+  var flashPt = { x: 0, y: 0 };
+  var running = false, paused = false, everMoved = false;
+  var idleFrames = 0;                  // сколько кадров в покое (для троттлинга)
+  var rafId = null;
+
+  // --- утилиты --------------------------------------------------------------
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function hexA(hex, a) {
+    hex = hex.replace('#', '');
+    if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    var r = parseInt(hex.slice(0, 2), 16),
+        g = parseInt(hex.slice(2, 4), 16),
+        b = parseInt(hex.slice(4, 6), 16);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+  }
+
+  // --- генератор ломаной молнии (midpoint displacement) ---------------------
+  function makePath(x1, y1, x2, y2, jit) {
+    var pts = [{ x: x1, y: y1 }, { x: x2, y: y2 }];
+    var passes = 4; // фиксированное число подразбиений — контролируем сегменты
+    var amp = jit;
+    for (var p = 0; p < passes; p++) {
+      var next = [];
+      for (var i = 0; i < pts.length - 1; i++) {
+        var a = pts[i], b = pts[i + 1];
+        var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        // перпендикуляр к сегменту
+        var dx = b.x - a.x, dy = b.y - a.y;
+        var len = Math.sqrt(dx * dx + dy * dy) || 1;
+        var off = (Math.random() - 0.5) * amp;
+        mx += (-dy / len) * off;
+        my += (dx / len) * off;
+        next.push(a, { x: mx, y: my });
+      }
+      next.push(pts[pts.length - 1]);
+      pts = next;
+      amp *= 0.55; // затухание амплитуды на каждом уровне
+    }
+    return pts;
+  }
+
+  function strokePath(pts, width, color, blur) {
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.lineWidth = width;
+    ctx.strokeStyle = color;
+    ctx.shadowBlur = blur;
+    ctx.shadowColor = color;
+    ctx.stroke();
+  }
+
+  // --- один разряд: гало + тело + ядро + ветви ------------------------------
+  function drawBolt(x1, y1, x2, y2, intensity) {
+    var jit = CFG.jitter * (0.7 + intensity * 0.9);
+    var pts = makePath(x1, y1, x2, y2, jit);
+
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.globalCompositeOperation = 'lighter';
+
+    // гало (широкое, полупрозрачное)
+    strokePath(pts, CFG.mainW * 3.4, hexA(CFG.body, 0.16 + intensity * 0.12), 16);
+    // тело разряда
+    strokePath(pts, CFG.mainW * (1 + intensity * 0.5), hexA(CFG.accent, 0.85), 12);
+    // ядро (почти белое)
+    strokePath(pts, Math.max(0.8, CFG.mainW * 0.5), hexA(CFG.core, 0.95), 6);
+
+    // ветви
+    if (!CFG.lowPowerBranches) {
+      for (var i = 2; i < pts.length - 2; i += 2) {
+        if (Math.random() < CFG.branchProb) {
+          var a = pts[i];
+          var b = pts[i + 1] || pts[i - 1];
+          var ang = Math.atan2(b.y - a.y, b.x - a.x) + (Math.random() - 0.5) * 1.7;
+          var blen = 14 + Math.random() * 26 * (0.6 + intensity);
+          var bx = a.x + Math.cos(ang) * blen;
+          var by = a.y + Math.sin(ang) * blen;
+          var bp = makePath(a.x, a.y, bx, by, CFG.jitter * 0.8);
+          strokePath(bp, CFG.branchW * 1.8, hexA(CFG.body, 0.14), 10);
+          strokePath(bp, CFG.branchW, hexA(CFG.accent, 0.7), 6);
+        }
+      }
+    }
+    ctx.shadowBlur = 0;
+  }
+
+  function drawCore(x, y, r, intensity) {
+    ctx.globalCompositeOperation = 'lighter';
+    var g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, hexA(CFG.core, 0.95));
+    g.addColorStop(0.35, hexA(CFG.accent, 0.8));
+    g.addColorStop(1, hexA(CFG.accent, 0));
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, y, r * (1 + intensity * 0.4), 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function drawFlash() {
+    if (flash <= 0.01) return;
+    ctx.globalCompositeOperation = 'lighter';
+    var r = 46 + (1 - flash) * 60;
+    var g = ctx.createRadialGradient(flashPt.x, flashPt.y, 0, flashPt.x, flashPt.y, r);
+    g.addColorStop(0, hexA(CFG.core, 0.5 * flash));
+    g.addColorStop(0.4, hexA(CFG.accent, 0.35 * flash));
+    g.addColorStop(1, hexA(CFG.accent, 0));
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(flashPt.x, flashPt.y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // =========================================================================
+  //  ЦИКЛ АНИМАЦИИ
+  // =========================================================================
+  function frame() {
+    if (!running || paused) { rafId = null; return; }
+    rafId = requestAnimationFrame(frame);
+
+    // сглаживание головы к указателю
+    prev.x = head.x; prev.y = head.y;
+    head.x = lerp(head.x, mouse.x, 0.35);
+    head.y = lerp(head.y, mouse.y, 0.35);
+
+    var vx = head.x - prev.x, vy = head.y - prev.y;
+    var speed = Math.sqrt(vx * vx + vy * vy);
+
+    // затухание вспышки и наведения
+    if (flash > 0) flash = Math.max(0, flash - CFG.clickDecay);
+    hoverBoost *= 0.9;
+
+    var moving = speed > 0.45 || flash > 0.02 || hoverBoost > 0.02;
+
+    // «то сходятся, то расходятся»: в покое дышим, в движении растягиваемся
+    restPhase += 0.045;
+    restAngle += 0.012;
+    var breathe = (Math.sin(restPhase) * 0.5 + 0.5); // 0..1
+    var gap = CFG.minGap + breathe * CFG.minGap * 0.7;
+    var angle;
+    if (speed > 0.5) {
+      gap = Math.min(CFG.minGap + speed * 2.2, CFG.minGap + CFG.maxStretch);
+      angle = Math.atan2(vy, vx);
+    } else {
+      angle = restAngle; // медленно вращаем ось «дыхания»
+    }
+
+    var tailX = head.x - Math.cos(angle) * gap;
+    var tailY = head.y - Math.sin(angle) * gap;
+
+    var intensity = Math.min(1, speed / 26) + hoverBoost * 0.8 + flash * 0.6;
+    intensity = Math.min(1.4, intensity);
+
+    // Троттлинг перерисовки молнии в покое (экономит FPS).
+    // При движении/вспышке/наведении — каждый кадр.
+    idleFrames = moving ? 0 : idleFrames + 1;
+    var redrawBolt = moving || (idleFrames % 4 === 0);
+
+    ctx.clearRect(0, 0, W, H);
+
+    drawFlash();
+    if (redrawBolt) {
+      drawBolt(tailX, tailY, head.x, head.y, intensity);
+      drawCore(tailX, tailY, 5 + intensity * 3, intensity);
+      drawCore(head.x, head.y, 6 + intensity * 4, intensity);
+      lastBolt = { tx: tailX, ty: tailY, hx: head.x, hy: head.y, it: intensity };
+    } else if (lastBolt) {
+      // в покое между перерисовками держим статичные ядра
+      drawCore(lastBolt.tx, lastBolt.ty, 5 + lastBolt.it * 3, lastBolt.it);
+      drawCore(lastBolt.hx, lastBolt.hy, 6 + lastBolt.it * 4, lastBolt.it);
+    }
+    ctx.globalCompositeOperation = 'source-over';
+  }
+  var lastBolt = null;
+
+  function start() {
+    if (running || paused) return;
+    running = true;
+    if (!rafId) rafId = requestAnimationFrame(frame);
+  }
+  function stopLoop() { running = false; if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
+
+  // =========================================================================
+  //  РЕЖИМ prefers-reduced-motion: статичный маркер (десктоп) / ничего (тач)
+  // =========================================================================
+  function drawStaticMarker() {
+    ctx.clearRect(0, 0, W, H);
+    if (isTouch) return;
+    drawCore(mouse.x, mouse.y, 9, 0.4);
+  }
+
+  // =========================================================================
+  //  СОБЫТИЯ
+  // =========================================================================
+  function onMove(e) {
+    mouse.x = e.clientX; mouse.y = e.clientY;
+    if (!everMoved) { everMoved = true; head.x = mouse.x; head.y = mouse.y; }
+    if (reduceMotion) drawStaticMarker();
+  }
+  function onDown(e) {
+    flashPt.x = (e.clientX != null ? e.clientX : mouse.x);
+    flashPt.y = (e.clientY != null ? e.clientY : mouse.y);
+    flash = 1;
+    if (reduceMotion) return;
+    start();
+  }
+  function onOver(e) {
+    var t = e.target;
+    if (t && t.closest && t.closest(CFG.clickableSelector)) hoverBoost = 1;
+  }
+
+  function goTouch() {
+    if (isTouch) return;
+    isTouch = true;
+    // на тач-устройствах системный курсор НЕ прячем
+    document.documentElement.classList.remove('enc-fine');
+  }
+  function onTouch(e) {
+    goTouch();
+    var t = e.touches && e.touches[0] ? e.touches[0] : e.changedTouches && e.changedTouches[0];
+    if (!t) return;
+    mouse.x = t.clientX; mouse.y = t.clientY;
+    if (!everMoved) { everMoved = true; head.x = mouse.x; head.y = mouse.y; }
+    flashPt.x = mouse.x; flashPt.y = mouse.y;
+    if (e.type === 'touchstart') flash = 1;
+    if (reduceMotion) { drawStaticMarker(); return; }
+    start();
+  }
+
+  // пауза при уходе со вкладки (перф)
+  function onVisibility() {
+    if (document.hidden) stopLoop();
+    else if (!paused && !reduceMotion) start();
+  }
+
+  // =========================================================================
+  //  ПУБЛИЧНЫЙ API
+  // =========================================================================
+  var api = {
+    config: CFG,
+    pause: function () { paused = true; stopLoop(); if (ctx) ctx.clearRect(0, 0, W, H); },
+    resume: function () { paused = false; if (!reduceMotion && !document.hidden) start(); }
+  };
+  window.EnergoresCursor = api;
+
+  // pauseWhenVisible: отдаём FPS 3D-сцене, пока она в вьюпорте
+  function setupPauseObserver() {
+    if (!CFG.pauseWhenVisible || !('IntersectionObserver' in window)) return;
+    var el = document.querySelector(CFG.pauseWhenVisible);
+    if (!el) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { en.isIntersecting ? api.pause() : api.resume(); });
+    }, { threshold: 0.05 });
+    io.observe(el);
+  }
+
+  // =========================================================================
+  //  INIT
+  // =========================================================================
+  function init() {
+    if (!document.body) { document.addEventListener('DOMContentLoaded', init); return; }
+    document.body.appendChild(canvas);
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    // Десктоп с точным указателем и без reduce-motion — прячем системный курсор.
+    if (finePointer && !reduceMotion) {
+      injectCSS();
+      document.documentElement.classList.add('enc-fine');
+    } else if (finePointer && reduceMotion) {
+      injectCSS(); // текстовый курсор в полях всё равно уместен, но курсор не прячем
+      document.documentElement.classList.remove('enc-fine');
+    }
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('mousedown', onDown, { passive: true });
+    window.addEventListener('mouseover', onOver, { passive: true });
+    window.addEventListener('touchstart', onTouch, { passive: true });
+    window.addEventListener('touchmove', onTouch, { passive: true });
+    document.addEventListener('visibilitychange', onVisibility);
+
+    setupPauseObserver();
+
+    if (reduceMotion) {
+      drawStaticMarker();          // статичный маркер, без rAF-мерцания
+    } else {
+      start();
+    }
+  }
+
+  init();
+})();
+</script>
