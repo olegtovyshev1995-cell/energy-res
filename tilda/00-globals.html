@@ -288,6 +288,37 @@
   }
   function openCall() { var m = document.getElementById('er-call-modal'); if (m) { resetCall(); m.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
   function closeCall() { var m = document.getElementById('er-call-modal'); if (m) { m.style.display = 'none'; document.body.style.overflow = ''; } }
+  /* ------------------------- lead relay → нативная форма Tilda (CRM + Google Sheets) ------------------------- */
+  // Кастомные HTML-формы не пишут в Tilda CRM напрямую. На странице Tilda должна
+  // лежать ОДНА нативная форма Tilda (можно визуально скрытая) с приёмниками
+  // «CRM» + «Google Sheets». Мы переносим в неё значения и субмитим — дальше Tilda
+  // сама раскладывает лид в CRM и в таблицу.
+  // Поля формы Tilda (атрибут name): Name, Phone, Email, Comment (можно скрытые).
+  var ER_LEAD_ENDPOINT = null; // запасной вебхук (Apps Script) — необязательно; null = выкл.
+  function erSetVal(form, name, val) {
+    if (val == null || val === '') return;
+    var el = form.querySelector('[name="' + name + '" i]');
+    if (!el) return;
+    el.value = val;
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+  function relayLead(fields) {
+    try {
+      var form = document.querySelector('form.js-form-proccess') || document.querySelector('form.t-form');
+      if (form) {
+        erSetVal(form, 'Name', fields.name);
+        erSetVal(form, 'Phone', fields.phone);
+        erSetVal(form, 'Email', fields.email);
+        erSetVal(form, 'Comment', fields.comment);
+        if (fields.phone) { var p = form.querySelector('input[type="tel"]'); if (p && !p.value) { p.value = fields.phone; p.dispatchEvent(new Event('input', { bubbles: true })); } }
+        form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      }
+      if (ER_LEAD_ENDPOINT) {
+        fetch(ER_LEAD_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(fields) });
+      }
+    } catch (err) { /* никогда не ломаем UX благодарности */ }
+  }
   function submitCall() {
     var m = document.getElementById('er-call-modal'); if (!m) return;
     var n = m.querySelector('#er-call-name'), ph = m.querySelector('#er-call-phone');
@@ -296,7 +327,7 @@
     var phoneOk = digits.length >= 10;
     if (n) n.style.borderColor = nameOk ? '' : '#ff4a4a';
     if (ph) ph.style.borderColor = phoneOk ? '' : '#ff4a4a';
-    if (nameOk && phoneOk) { m.querySelector('[data-call-form]').style.display = 'none'; m.querySelector('[data-call-done]').style.display = ''; }
+    if (nameOk && phoneOk) { relayLead({ name: n.value.trim(), phone: ph.value.trim(), comment: 'Источник: Обратный звонок' }); m.querySelector('[data-call-form]').style.display = 'none'; m.querySelector('[data-call-done]').style.display = ''; }
     else { (nameOk ? ph : n).focus(); }
   }
 
@@ -330,7 +361,7 @@
   function submitPrice(scope) {
     var ph = scope.querySelector('[data-price-phone]');
     var digits = (ph ? ph.value : '').replace(/\D/g, '');
-    if (digits.length >= 10) { var f = scope.querySelector('[data-price-form]'), d = scope.querySelector('[data-price-done]'); if (f) f.style.display = 'none'; if (d) d.style.display = ''; }
+    if (digits.length >= 10) { var pw = scope.querySelector('[data-price-power]'), tm = scope.querySelector('[data-price-term]'); relayLead({ phone: ph.value.trim(), comment: 'Источник: Точная цена с доставкой. Мощность: ' + (pw ? pw.value : '') + ' кВт; Срок: ' + (tm ? tm.value : '') + ' дн.' }); var f = scope.querySelector('[data-price-form]'), d = scope.querySelector('[data-price-done]'); if (f) f.style.display = 'none'; if (d) d.style.display = ''; }
     else if (ph) { ph.style.borderColor = '#ff4a4a'; ph.focus(); }
   }
 
@@ -339,6 +370,7 @@
     var e = scope.querySelector('[data-email-input]');
     var ok = e && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e.value.trim());
     if (!ok) { if (e) { e.style.borderColor = '#ff4a4a'; e.focus(); } return; }
+    relayLead({ email: e.value.trim(), comment: 'Источник: Подписка на цены (e-mail)' });
     var f = scope.querySelector('[data-email-form]'), d = scope.querySelector('[data-email-done]');
     if (f) f.style.display = 'none'; if (d) d.style.display = '';
   }
@@ -396,7 +428,7 @@
       case 'quiz-channel': qs.channel = t.getAttribute('data-channel'); renderQuiz(); break;
       case 'quiz-submit': {
         var digits = (qs.phone || '').replace(/\D/g, '');
-        if (digits.length >= 10) { qs.step = STEPS.length + 1; renderQuiz(); }
+        if (digits.length >= 10) { var _a = qs.answers || {}; var _s = Object.keys(_a).map(function (k) { return k + ': ' + _a[k]; }).join('; '); relayLead({ phone: qs.phone, comment: 'Источник: Квиз. Канал: ' + qs.channel + '. ' + _s + '. Вилка: ' + estimate() }); qs.step = STEPS.length + 1; renderQuiz(); }
         else {
           var inp = Array.prototype.slice.call(document.querySelectorAll('[data-act="quiz-phone"]')).filter(function (i) { return i.offsetParent !== null; })[0] || document.querySelector('[data-act="quiz-phone"]');
           if (inp) { inp.style.borderColor = '#ff4a4a'; inp.focus(); }
