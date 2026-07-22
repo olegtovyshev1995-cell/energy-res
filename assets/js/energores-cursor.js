@@ -40,7 +40,6 @@
   var mq = window.matchMedia || function () { return { matches: false, addListener: function () {} }; };
   var finePointer = mq('(pointer: fine)').matches && mq('(hover: hover)').matches;
   var reduceMotion = mq('(prefers-reduced-motion: reduce)').matches;
-  var isTouch = false; // переключимся в тач-режим при первом касании
 
   // =========================================================================
   //  CANVAS
@@ -278,7 +277,6 @@
   // =========================================================================
   function drawStaticMarker() {
     ctx.clearRect(0, 0, W, H);
-    if (isTouch) return;
     drawCore(mouse.x, mouse.y, 9, 0.4);
   }
 
@@ -300,24 +298,6 @@
   function onOver(e) {
     var t = e.target;
     if (t && t.closest && t.closest(CFG.clickableSelector)) hoverBoost = 1;
-  }
-
-  function goTouch() {
-    if (isTouch) return;
-    isTouch = true;
-    // на тач-устройствах системный курсор НЕ прячем
-    document.documentElement.classList.remove('enc-fine');
-  }
-  function onTouch(e) {
-    goTouch();
-    var t = e.touches && e.touches[0] ? e.touches[0] : e.changedTouches && e.changedTouches[0];
-    if (!t) return;
-    mouse.x = t.clientX; mouse.y = t.clientY;
-    if (!everMoved) { everMoved = true; head.x = mouse.x; head.y = mouse.y; }
-    flashPt.x = mouse.x; flashPt.y = mouse.y;
-    if (e.type === 'touchstart') flash = 1;
-    if (reduceMotion) { drawStaticMarker(); return; }
-    start();
   }
 
   // пауза при уходе со вкладки (перф)
@@ -352,24 +332,26 @@
   // =========================================================================
   function init() {
     if (!document.body) { document.addEventListener('DOMContentLoaded', init); return; }
+
+    // ЭФФЕКТ — ТОЛЬКО ДЛЯ РЕАЛЬНОГО УКАЗАТЕЛЯ (мышь/трекпад).
+    // На тач-устройствах (телефоны/планшеты) «курсора» нет: разряд там
+    // залипал бы на месте после отрыва пальца, а touchmove при прокрутке
+    // грузил бы страницу. Поэтому на мобилках НИЧЕГО не инициализируем —
+    // ни canvas, ни слушателей, ни rAF (полностью нулевой оверхед).
+    if (!finePointer) return;
+
     document.body.appendChild(canvas);
     resize();
     window.addEventListener('resize', resize, { passive: true });
 
-    // Десктоп с точным указателем и без reduce-motion — прячем системный курсор.
-    if (finePointer && !reduceMotion) {
-      injectCSS();
-      document.documentElement.classList.add('enc-fine');
-    } else if (finePointer && reduceMotion) {
-      injectCSS(); // текстовый курсор в полях всё равно уместен, но курсор не прячем
-      document.documentElement.classList.remove('enc-fine');
-    }
+    // текстовый курсор в полях уместен всегда; системный курсор прячем
+    // только когда молния реально анимируется (без reduce-motion).
+    injectCSS();
+    if (!reduceMotion) document.documentElement.classList.add('enc-fine');
 
     window.addEventListener('mousemove', onMove, { passive: true });
     window.addEventListener('mousedown', onDown, { passive: true });
     window.addEventListener('mouseover', onOver, { passive: true });
-    window.addEventListener('touchstart', onTouch, { passive: true });
-    window.addEventListener('touchmove', onTouch, { passive: true });
     document.addEventListener('visibilitychange', onVisibility);
 
     setupPauseObserver();
