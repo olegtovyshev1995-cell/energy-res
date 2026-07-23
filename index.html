@@ -312,6 +312,10 @@
   // сама раскладывает лид в CRM и в таблицу.
   // Поля формы Tilda (атрибут name): Name, Phone, Email, Comment (можно скрытые).
   var ER_LEAD_ENDPOINT = null; // запасной вебхук (Apps Script) — необязательно; null = выкл.
+  // Куда вести после успешной отправки любой формы-заявки. Относительный путь
+  // работает и на GitHub Pages (…/energy-res/thank-you.html), и на Tilda-домене.
+  // null — не переадресовывать (показать только встроенный экран «принято»).
+  var ER_THANKYOU_URL = 'thank-you.html';
   function erSetVal(form, name, val) {
     if (val == null || val === '') return;
     var el = form.querySelector('[name="' + name + '" i]');
@@ -335,6 +339,9 @@
         fetch(ER_LEAD_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(fields) });
       }
     } catch (err) { /* никогда не ломаем UX благодарности */ }
+    // авто-переадресация на страницу «Спасибо» после отправки заявки
+    // (даём ~1.1с, чтобы AJAX-сабмит нативной формы Tilda успел уйти)
+    if (ER_THANKYOU_URL) { try { setTimeout(function () { location.assign(ER_THANKYOU_URL); }, 1100); } catch (e) {} }
   }
   function submitCall() {
     var m = document.getElementById('er-call-modal'); if (!m) return;

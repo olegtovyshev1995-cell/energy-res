@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Спасибо за заявку · ЭНЕРГОРЕСУРС</title>
+<meta name="description" content="Заявка отправлена. Инженер ЭНЕРГОРЕСУРС рассчитает мощность и цену и перезвонит с номера +7 927 721 17 78.">
+<meta name="robots" content="noindex,follow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+
+<style>
+  /* Baked-in tweak values from the final design:
+     accent #FE6108 · current speed 1.3× · strike interval 3.5s */
+  :root{ --acc:#FE6108; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow-x:hidden}
+  body{background:#090b10}
+  a{color:var(--acc);text-decoration:none}
+  a:hover{color:#fff}
+
+  #er-mail{color:#8A93A3;font-size:14px;transition:color .18s ease}
+  #er-mail:hover{color:#EAF0F8}
+
+  #er-cta{transition:box-shadow .2s ease, transform .2s ease}
+  #er-cta:hover{box-shadow:0 8px 40px rgba(254,97,8,.5);transform:translateY(-1px)}
+
+  .er-region-line{transition:opacity .3s ease}
+
+  /* ---------- responsive / mobile ---------- */
+  @media (max-width:900px){
+    #er-root{padding:26px 20px 40px}
+  }
+  @media (max-width:640px){
+    #er-root{padding:22px 16px 36px}
+    .er-region-prefix{display:none}
+    .er-region-line{font-size:12.5px;padding-left:12px;gap:6px}
+    /* shrink the 3D orbs so the wire band never overflows */
+    .er-node,.er-orb{width:74px !important;height:74px !important}
+    .er-orb-glyph{width:30px !important;height:30px !important}
+    #er-band{height:120px !important}
+    #er-steps{gap:8px !important;padding:0 2% !important}
+    #er-steps .er-step-title{font-size:13px !important}
+    #er-steps .er-step-sub{font-size:11.5px !important}
+  }
+  @media (max-width:430px){
+    .er-header{flex-wrap:wrap;gap:10px}
+    .er-region-line{border-left:none;padding-left:0}
+    .er-node,.er-orb{width:62px !important;height:62px !important}
+    .er-orb-glyph{width:26px !important;height:26px !important}
+    #er-band{height:104px !important}
+    #er-head2{font-size:26px !important;letter-spacing:.5px !important}
+    #er-steps{grid-template-columns:1fr 1fr 1fr !important;gap:6px !important}
+    #er-steps .er-step-sub{display:none}
+    .er-footer{flex-direction:column;align-items:flex-start !important}
+    #er-cta{width:100%;justify-content:center}
+  }
+</style>
+</head>
+<body>
+<div id="er-root" style="position:relative;min-height:100vh;overflow:hidden;background:#090b10;color:#EAF0F8;font-family:'Manrope',sans-serif;display:flex;flex-direction:column;align-items:center;padding:36px 24px 44px">
+
+  <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(1200px 620px at 50% -12%, rgba(254,97,8,0.14), transparent 62%)"></div>
+  <div style="position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:46px 46px;-webkit-mask-image:radial-gradient(900px 620px at 50% 34%, #000 0%, transparent 78%);mask-image:radial-gradient(900px 620px at 50% 34%, #000 0%, transparent 78%);opacity:.7"></div>
+  <div style="position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 220px 40px rgba(0,0,0,.85)"></div>
+
+  <header class="er-header" style="position:relative;width:100%;max-width:1040px;display:flex;align-items:center;justify-content:space-between;gap:16px;z-index:3">
+    <a href="https://olegtovyshev1995-cell.github.io/energy-res/" style="display:flex;align-items:center;flex:none">
+      <img src="https://static.tildacdn.com/tild3364-3166-4238-b839-643339323133/er-logo-main160i_1_1.png" alt="ЭНЕРГОРЕСУРС" style="height:36px;width:auto;display:block">
+    </a>
+    <div class="er-region-line" style="display:flex;align-items:center;gap:8px;color:#AEB6C4;font-size:14px;font-weight:600;border-left:1px solid rgba(255,255,255,.14);padding-left:18px;flex:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;flex:none"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+      <span><span class="er-region-prefix">Аренда генераторов · </span><span data-geo-hdr>Самара и область</span></span>
+    </div>
+  </header>
+
+  <main style="position:relative;z-index:3;width:100%;max-width:900px;display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:min(9vh,90px)">
+    <div style="display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border:1px solid rgba(124,255,140,.35);border-radius:100px;background:rgba(124,255,140,.06);color:#7CFF6B;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase">
+      <span style="width:7px;height:7px;border-radius:50%;background:#7CFF6B;box-shadow:0 0 10px #7CFF6B"></span>
+      Заявка отправлена
+    </div>
+
+    <div style="position:relative;margin-top:26px;padding:10px 0">
+      <svg id="er-bolt-svg" viewBox="0 0 1200 300" preserveAspectRatio="none" style="position:absolute;left:-4%;top:-6%;width:108%;height:112%;opacity:0;pointer-events:none;z-index:2;overflow:visible">
+        <g id="er-bolt-g"></g>
+      </svg>
+      <h1 id="er-head" style="position:relative;z-index:1;font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(44px,8.5vw,104px);line-height:.95;letter-spacing:1px;text-transform:uppercase;color:#EAF0F8;text-shadow:0 0 2px rgba(255,255,255,.15)">Спасибо<br>за заявку</h1>
+    </div>
+
+    <p style="max-width:600px;margin-top:26px;font-size:clamp(15px,1.8vw,18px);line-height:1.6;color:#AEB6C4">Инженер рассчитает мощность и цену под ваш объект и перезвонит в рабочее время. Работаем <span style="color:#EAF0F8;font-weight:600">Пн–Пт, 8:00–17:00</span> (МСК).</p>
+
+    <div style="position:relative;margin-top:34px;display:flex;flex-direction:column;align-items:center">
+      <div style="font-family:'Oswald',sans-serif;font-weight:500;letter-spacing:3px;font-size:13px;text-transform:uppercase;color:#8A93A3;margin-bottom:8px">Перезвоним с номера</div>
+      <div style="position:relative;padding:4px 8px">
+        <svg id="er-bolt2-svg" viewBox="0 0 1200 300" preserveAspectRatio="none" style="position:absolute;left:-3%;top:-12%;width:106%;height:124%;opacity:0;pointer-events:none;z-index:2;overflow:visible"><g id="er-bolt2-g"></g></svg>
+        <a id="er-head2" href="tel:+79277211778" style="position:relative;z-index:1;font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(32px,5.8vw,66px);line-height:1;letter-spacing:1px;color:#fff;text-shadow:0 0 14px rgba(254,97,8,.55), 0 0 30px rgba(254,97,8,.35);white-space:nowrap">+7 927 721 17 78</a>
+      </div>
+      <div style="margin-top:12px;font-size:clamp(14px,1.7vw,17px);color:#AEB6C4">Пожалуйста, <span style="color:var(--acc);font-weight:700">возьмите трубку</span></div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px">
+      <span style="font-size:12.5px;color:#8A93A3;border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:6px 13px">Без спама и рассылок</span>
+      <span style="font-size:12.5px;color:#8A93A3;border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:6px 13px">Контакты не передаём третьим лицам</span>
+    </div>
+  </main>
+
+  <section style="position:relative;z-index:3;width:100%;max-width:1000px;margin-top:min(8vh,72px)">
+    <div style="text-align:center;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:3px;font-size:13px;color:#8A93A3;text-transform:uppercase;margin-bottom:8px">Что дальше</div>
+
+    <div id="er-band" style="position:relative;height:150px">
+      <svg id="er-wire-svg" viewBox="0 0 1000 160" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible">
+        <path id="er-wire-deco" fill="none" stroke="rgba(254,97,8,.10)" stroke-width="1"></path>
+        <path id="er-wire" fill="none" stroke="rgba(254,97,8,.28)" stroke-width="2"></path>
+        <path id="er-wire-glow" fill="none" stroke="var(--acc)" stroke-width="2" style="opacity:.35;filter:drop-shadow(0 0 5px var(--acc))"></path>
+        <g id="er-nodes"></g>
+        <g id="er-pulses"></g>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;justify-content:space-around;align-items:center;padding:0 4%">
+        <div class="er-node" style="position:relative;width:92px;height:92px;flex:0 0 auto">
+          <div class="er-node-glow" style="position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,var(--acc),transparent 68%);opacity:.15"></div>
+          <div class="er-orb" style="position:relative;width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at 34% 26%, #FF9A52, #FE6108 46%, #B23A00 100%);box-shadow:0 14px 32px rgba(254,97,8,.45), inset 0 3px 7px rgba(255,255,255,.55), inset 0 -11px 20px rgba(120,28,0,.6);display:grid;place-items:center">
+            <div style="position:absolute;top:14%;left:20%;width:56%;height:32%;border-radius:50%;background:radial-gradient(circle at 50% 0,rgba(255,255,255,.65),transparent 72%);pointer-events:none"></div>
+            <svg class="er-orb-glyph" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 1.5px 1px rgba(90,20,0,.6))"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+        </div>
+        <div class="er-node" style="position:relative;width:92px;height:92px;flex:0 0 auto">
+          <div class="er-node-glow" style="position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,var(--acc),transparent 68%);opacity:.15"></div>
+          <div class="er-orb" style="position:relative;width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at 34% 26%, #FF9A52, #FE6108 46%, #B23A00 100%);box-shadow:0 14px 32px rgba(254,97,8,.45), inset 0 3px 7px rgba(255,255,255,.55), inset 0 -11px 20px rgba(120,28,0,.6);display:grid;place-items:center">
+            <div style="position:absolute;top:14%;left:20%;width:56%;height:32%;border-radius:50%;background:radial-gradient(circle at 50% 0,rgba(255,255,255,.65),transparent 72%);pointer-events:none"></div>
+            <svg class="er-orb-glyph" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 1.5px 1px rgba(90,20,0,.6))"><path d="M12 8V3H8"/><path d="M12 3a9 9 0 1 1-6.4 2.6"/><path d="M12 12l3 2"/></svg>
+          </div>
+        </div>
+        <div class="er-node" style="position:relative;width:92px;height:92px;flex:0 0 auto">
+          <div class="er-node-glow" style="position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,var(--acc),transparent 68%);opacity:.15"></div>
+          <div class="er-orb" style="position:relative;width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at 34% 26%, #FF9A52, #FE6108 46%, #B23A00 100%);box-shadow:0 14px 32px rgba(254,97,8,.45), inset 0 3px 7px rgba(255,255,255,.55), inset 0 -11px 20px rgba(120,28,0,.6);display:grid;place-items:center">
+            <div style="position:absolute;top:14%;left:20%;width:56%;height:32%;border-radius:50%;background:radial-gradient(circle at 50% 0,rgba(255,255,255,.65),transparent 72%);pointer-events:none"></div>
+            <svg class="er-orb-glyph" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 1.5px 1px rgba(90,20,0,.6))"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="er-steps" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px;padding:0 4%">
+      <div style="text-align:center">
+        <div class="er-step-title" style="font-family:'Oswald',sans-serif;font-weight:600;font-size:16px;letter-spacing:.5px;text-transform:uppercase">Заявка принята</div>
+        <div class="er-step-sub" style="font-size:13px;color:#8A93A3;margin-top:5px;line-height:1.45">Мы получили ваши данные и объект</div>
+      </div>
+      <div style="text-align:center">
+        <div class="er-step-title" style="font-family:'Oswald',sans-serif;font-weight:600;font-size:16px;letter-spacing:.5px;text-transform:uppercase">Расчёт за 15 минут</div>
+        <div class="er-step-sub" style="font-size:13px;color:#8A93A3;margin-top:5px;line-height:1.45">Инженер считает мощность и цену</div>
+      </div>
+      <div style="text-align:center">
+        <div class="er-step-title" style="font-family:'Oswald',sans-serif;font-weight:600;font-size:16px;letter-spacing:.5px;text-transform:uppercase">Звонок и договор</div>
+        <div class="er-step-sub" style="font-size:13px;color:#8A93A3;margin-top:5px;line-height:1.45">Перезвоним, согласуем сроки и цену</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="er-footer" style="position:relative;z-index:3;width:100%;max-width:1000px;margin-top:min(8vh,60px);display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.08);padding-top:24px">
+    <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center">
+      <a href="tel:+79277211778" style="display:flex;align-items:center;gap:9px;font-family:'Oswald',sans-serif;font-weight:600;font-size:20px;letter-spacing:.5px;color:#EAF0F8">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>
+        +7 927 721 17 78
+      </a>
+      <a id="er-mail" href="mailto:info@energy-res.ru">info@energy-res.ru</a>
+    </div>
+    <a id="er-cta" href="https://olegtovyshev1995-cell.github.io/energy-res/" style="display:inline-flex;align-items:center;gap:10px;background:var(--acc);color:#0a0d12;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:1px;font-size:15px;text-transform:uppercase;padding:13px 26px;border-radius:9px;box-shadow:0 8px 30px rgba(254,97,8,.28)">
+      Вернуться на сайт
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   Геоподмена региона (динамическая) — совместима с главным
+   сайтом: сначала мгновенно читаем кэш localStorage 'er_geo',
+   который ставит основной сайт, затем ?geo=, затем IP.
+   ============================================================ */
+(function(){
+  "use strict";
+  var GEO_DEFAULT = { hdr: 'Самара и область', in: 'Самаре' };
+  var GEO = {
+    'samara': { hdr: 'Самара и область', in: 'Самаре' },
+    'moscow': { hdr: 'Москва и область', in: 'Москве' },
+    'saint petersburg': { hdr: 'Санкт-Петербург и ЛО', in: 'Санкт-Петербурге' }, 'st. petersburg': { hdr: 'Санкт-Петербург и ЛО', in: 'Санкт-Петербурге' }, 'leningrad': { hdr: 'Санкт-Петербург и ЛО', in: 'Санкт-Петербурге' },
+    'krasnodar': { hdr: 'Краснодарский край', in: 'Краснодаре' },
+    'rostov': { hdr: 'Ростовская область', in: 'Ростове-на-Дону' },
+    'sverdlovsk': { hdr: 'Свердловская область', in: 'Екатеринбурге' },
+    'novosibirsk': { hdr: 'Новосибирская область', in: 'Новосибирске' },
+    'tatarstan': { hdr: 'Республика Татарстан', in: 'Казани' },
+    'bashkortostan': { hdr: 'Республика Башкортостан', in: 'Уфе' },
+    'chelyabinsk': { hdr: 'Челябинская область', in: 'Челябинске' },
+    'nizhny novgorod': { hdr: 'Нижегородская область', in: 'Нижнем Новгороде' },
+    'omsk': { hdr: 'Омская область', in: 'Омске' },
+    'krasnoyarsk': { hdr: 'Красноярский край', in: 'Красноярске' },
+    'perm': { hdr: 'Пермский край', in: 'Перми' },
+    'voronezh': { hdr: 'Воронежская область', in: 'Воронеже' },
+    'volgograd': { hdr: 'Волгоградская область', in: 'Волгограде' },
+    'saratov': { hdr: 'Саратовская область', in: 'Саратове' },
+    'tyumen': { hdr: 'Тюменская область', in: 'Тюмени' },
+    'stavropol': { hdr: 'Ставропольский край', in: 'Ставрополе' },
+    'irkutsk': { hdr: 'Иркутская область', in: 'Иркутске' },
+    'kemerovo': { hdr: 'Кемеровская область', in: 'Кемерове' }, 'kuzbass': { hdr: 'Кемеровская область', in: 'Кемерове' },
+    'ulyanovsk': { hdr: 'Ульяновская область', in: 'Ульяновске' },
+    'penza': { hdr: 'Пензенская область', in: 'Пензе' },
+    'orenburg': { hdr: 'Оренбургская область', in: 'Оренбурге' },
+    'tomsk': { hdr: 'Томская область', in: 'Томске' },
+    'astrakhan': { hdr: 'Астраханская область', in: 'Астрахани' },
+    'kirov': { hdr: 'Кировская область', in: 'Кирове' },
+    'udmurt': { hdr: 'Удмуртская Республика', in: 'Ижевске' }, 'udmurtia': { hdr: 'Удмуртская Республика', in: 'Ижевске' },
+    'khabarovsk': { hdr: 'Хабаровский край', in: 'Хабаровске' },
+    'primorsky': { hdr: 'Приморский край', in: 'Владивостоке' }, 'primorye': { hdr: 'Приморский край', in: 'Владивостоке' },
+    'sakha': { hdr: 'Республика Саха (Якутия)', in: 'Якутске' }, 'yakutia': { hdr: 'Республика Саха (Якутия)', in: 'Якутске' }, 'sakha yakutia': { hdr: 'Республика Саха (Якутия)', in: 'Якутске' },
+    'amur': { hdr: 'Амурская область', in: 'Благовещенске' },
+    'sakhalin': { hdr: 'Сахалинская область', in: 'Южно-Сахалинске' },
+    'magadan': { hdr: 'Магаданская область', in: 'Магадане' },
+    'kamchatka': { hdr: 'Камчатский край', in: 'Петропавловске-Камчатском' },
+    'chukotka': { hdr: 'Чукотский АО', in: 'Анадыре' },
+    'buryatia': { hdr: 'Республика Бурятия', in: 'Улан-Удэ' },
+    'zabaykalsky': { hdr: 'Забайкальский край', in: 'Чите' }, 'transbaikal': { hdr: 'Забайкальский край', in: 'Чите' },
+    'altai': { hdr: 'Алтайский край', in: 'Барнауле' },
+    'kurgan': { hdr: 'Курганская область', in: 'Кургане' },
+    'khanty-mansi': { hdr: 'Ханты-Мансийский АО', in: 'Сургуте' }, 'khanty-mansia': { hdr: 'Ханты-Мансийский АО', in: 'Сургуте' },
+    'yamalo-nenets': { hdr: 'Ямало-Ненецкий АО', in: 'Новом Уренгое' }, 'yamalo': { hdr: 'Ямало-Ненецкий АО', in: 'Новом Уренгое' },
+    'arkhangelsk': { hdr: 'Архангельская область', in: 'Архангельске' },
+    'komi': { hdr: 'Республика Коми', in: 'Сыктывкаре' },
+    'mordovia': { hdr: 'Республика Мордовия', in: 'Саранске' },
+    'mari el': { hdr: 'Республика Марий Эл', in: 'Йошкар-Оле' }, 'mariy-el': { hdr: 'Республика Марий Эл', in: 'Йошкар-Оле' },
+    'chuvash': { hdr: 'Чувашская Республика', in: 'Чебоксарах' }, 'chuvashia': { hdr: 'Чувашская Республика', in: 'Чебоксарах' },
+    'belgorod': { hdr: 'Белгородская область', in: 'Белгороде' },
+    'lipetsk': { hdr: 'Липецкая область', in: 'Липецке' },
+    'tambov': { hdr: 'Тамбовская область', in: 'Тамбове' }
+  };
+  var GEO_CITY = { 'yekaterinburg': 'sverdlovsk', 'ekaterinburg': 'sverdlovsk', 'kazan': 'tatarstan', 'ufa': 'bashkortostan', 'rostov-on-don': 'rostov', 'vladivostok': 'primorsky', 'yakutsk': 'sakha', 'nizhny novgorod': 'nizhny novgorod', 'surgut': 'khanty-mansi', 'novy urengoy': 'yamalo-nenets', 'ulan-ude': 'buryatia', 'izhevsk': 'udmurt', 'cheboksary': 'chuvash', 'barnaul': 'altai', 'syktyvkar': 'komi', 'saransk': 'mordovia', 'yoshkar-ola': 'mari el' };
+  function normReg(s){ s=(s||'').toLowerCase().replace(/[()]/g,' '); s=s.replace(/\b(oblast|kray|krai|republic|region|autonomous okrug|okrug|city|respublika)\b/g,' '); s=s.replace(/republic of/g,' ').replace(/\s+/g,' ').trim(); return s; }
+  function resolveGeo(region, city){
+    var k=normReg(region); if(GEO[k]) return GEO[k];
+    var c=(city||'').toLowerCase().trim(); if(GEO_CITY[c]&&GEO[GEO_CITY[c]]) return GEO[GEO_CITY[c]]; if(GEO[c]) return GEO[c];
+    return null;
+  }
+  function applyGeo(g){
+    if(!g) return;
+    var a=document.querySelectorAll('[data-geo-hdr]'); for(var i=0;i<a.length;i++) a[i].textContent=g.hdr;
+    var b=document.querySelectorAll('[data-geo-in]'); for(var j=0;j<b.length;j++) b[j].textContent=g.in;
+  }
+  function geoFetchJSON(url, ok, err){
+    try{ var x=new XMLHttpRequest(); x.open('GET',url,true); x.timeout=4500; x.onreadystatechange=function(){ if(x.readyState===4){ if(x.status>=200&&x.status<300){ try{ ok(JSON.parse(x.responseText)); }catch(e){ err&&err(); } } else err&&err(); } }; x.ontimeout=function(){ err&&err(); }; x.onerror=function(){ err&&err(); }; x.send(); }catch(e){ err&&err(); }
+  }
+  function geoInit(){
+    try{
+      // 1) URL-параметр ?geo=
+      var q=null; try{ q=new URLSearchParams(location.search).get('geo'); }catch(e){}
+      if(q){ var gq=resolveGeo(q,q); if(gq){ applyGeo(gq); return; } }
+      // 2) кэш от основного сайта (мгновенно, без мигания)
+      try{ var cs=localStorage.getItem('er_geo'); if(cs){ var o=JSON.parse(cs); if(o&&o.t&&(Date.now()-o.t)<7*864e5&&o.g){ applyGeo(o.g); return; } } }catch(e){}
+      // 3) определение по IP (на случай прямого захода)
+      var done=false;
+      var handle=function(region,city){ if(done) return; done=true; var g=resolveGeo(region,city); if(g){ applyGeo(g); try{ localStorage.setItem('er_geo', JSON.stringify({ t:Date.now(), g:g })); }catch(e){} } };
+      var fallback=function(){ if(done) return; geoFetchJSON('https://get.geojs.io/v1/ip/geo.json', function(d){ if(d) handle(d.region,d.city); }, function(){}); };
+      geoFetchJSON('https://ipwho.is/', function(d){ if(d&&d.success!==false&&(d.country_code==='RU'||d.country==='Russia')) handle(d.region,d.city); else fallback(); }, fallback);
+    }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', geoInit); else geoInit();
+})();
+
+/* ============================================================
+   Эффекты: разряд по заголовку/телефону + ток по проводам
+   ============================================================ */
+(function(){
+  "use strict";
+  // ---- Baked-in tweak values (from the final design) ----
+  var ACC = '#FE6108';        // accent
+  var SPEED = 1.3;            // current speed multiplier
+  var INTERVAL = 3.5;         // seconds between automatic strikes
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var timers = [];
+  var tl = null, pulseTween = null, pulses = null, boltEls = [], rz = null;
+
+  function byId(id){ return document.getElementById(id); }
+
+  // ---- Effect 1: lightning through the headline + phone number ----
+  function makeBolt(w, h){
+    var segs = 15, midY = h / 2, d = 'M 0 ' + midY, branches = [];
+    for (var i = 1; i <= segs; i++){
+      var x = (w / segs) * i,
+          y = midY + (Math.random() - 0.5) * h * 0.92;
+      d += ' L ' + x.toFixed(1) + ' ' + y.toFixed(1);
+      if (Math.random() < 0.28){
+        var bx = x + (Math.random() * 70 + 20) * (Math.random() < 0.5 ? -1 : 1);
+        var by = y + (Math.random() - 0.5) * h * 0.9;
+        branches.push('M ' + x.toFixed(1) + ' ' + y.toFixed(1) + ' L ' + bx.toFixed(1) + ' ' + by.toFixed(1));
+      }
+    }
+    return { main: d, branches: branches };
+  }
+
+  function buildBolt(){
+    var W = 1200, H = 300;
+    boltEls = [];
+    ['er-bolt-g', 'er-bolt2-g'].forEach(function(gid){
+      var g = byId(gid); if (!g) return;
+      g.innerHTML = '';
+      var b = makeBolt(W, H);
+      function mk(d, sw, stroke, glow, op){
+        var p = document.createElementNS(NS, 'path');
+        p.setAttribute('d', d);
+        p.setAttribute('fill', 'none');
+        p.setAttribute('stroke', stroke);
+        p.setAttribute('stroke-width', sw);
+        p.setAttribute('stroke-linecap', 'round');
+        p.setAttribute('stroke-linejoin', 'round');
+        if (glow) p.style.filter = 'drop-shadow(0 0 7px ' + ACC + ')';
+        p.style.opacity = op;
+        g.appendChild(p);
+        return p;
+      }
+      var glow = mk(b.main, 8, ACC, true, 0.9),
+          core = mk(b.main, 2.6, '#fff', false, 1);
+      var bEls = b.branches.map(function(bd){ return mk(bd, 1.6, ACC, true, 0.75); });
+      [glow, core].concat(bEls).forEach(function(p){
+        var L = p.getTotalLength();
+        p.style.strokeDasharray = L;
+        p.style.strokeDashoffset = L;
+        boltEls.push(p);
+      });
+    });
+  }
+
+  function strike(){
+    var head = byId('er-head'), head2 = byId('er-head2');
+    var svgs = ['er-bolt-svg', 'er-bolt2-svg'].map(byId).filter(Boolean);
+    if (!svgs.length || !head) return;
+    buildBolt();
+    if (tl) tl.kill();
+    tl = gsap.timeline();
+    gsap.set(svgs, { opacity: 1 });
+    tl.to(boltEls, { strokeDashoffset: 0, duration: 0.13, ease: 'power2.in' });
+    tl.set([head, head2].filter(Boolean), { textShadow: '0 0 24px ' + ACC + ', 0 0 54px ' + ACC, color: '#ffffff' }, 0.02);
+    tl.to(svgs, { opacity: 0.2, duration: 0.05 });
+    tl.to(svgs, { opacity: 1, duration: 0.05 });
+    tl.set(head, { textShadow: '0 0 2px rgba(255,255,255,.15)', color: '#EAF0F8' }, '+=.14');
+    if (head2) tl.set(head2, { textShadow: '0 0 14px rgba(254,97,8,.55), 0 0 30px rgba(254,97,8,.35)', color: '#ffffff' }, '<');
+    tl.to(svgs, { opacity: 0, duration: 0.5, ease: 'power2.out' });
+  }
+
+  function scheduleStrike(delay){
+    var d = delay != null ? delay : INTERVAL * 1000 * (0.7 + Math.random() * 0.7);
+    var t = setTimeout(function(){ strike(); scheduleStrike(); }, d);
+    timers.push(t);
+  }
+
+  // ---- Effect 2: current running along the wires ----
+  function buildCurrent(){
+    var svg = byId('er-wire-svg'), band = byId('er-band');
+    if (!svg || !band) return;
+    var W = Math.max(360, Math.round(band.getBoundingClientRect().width)) || 1000,
+        H = 160, cy = 80;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    var nx = [W * 0.1667, W * 0.5, W * 0.8333];
+    var m1 = (nx[0] + nx[1]) / 2, m2 = (nx[1] + nx[2]) / 2;
+    var d = 'M0 ' + cy + ' H' + nx[0] + ' H' + (m1 - 34).toFixed(0) + ' V' + (cy - 24) +
+            ' H' + (m1 + 34).toFixed(0) + ' V' + cy + ' H' + nx[1] +
+            ' H' + (m2 - 34).toFixed(0) + ' V' + (cy + 24) + ' H' + (m2 + 34).toFixed(0) +
+            ' V' + cy + ' H' + nx[2] + ' H' + W;
+    byId('er-wire').setAttribute('d', d);
+    byId('er-wire-glow').setAttribute('d', d);
+    var deco = 'M0 ' + (cy - 40) + ' H' + (nx[0] - 30).toFixed(0) + ' V' + cy +
+               ' M' + (nx[2] + 30).toFixed(0) + ' ' + cy + ' V' + (cy + 40) + ' H' + W;
+    byId('er-wire-deco').setAttribute('d', deco);
+
+    // nodes on the wire
+    var ng = byId('er-nodes'); ng.innerHTML = '';
+    nx.forEach(function(x){
+      var c = document.createElementNS(NS, 'circle');
+      c.setAttribute('cx', x); c.setAttribute('cy', cy); c.setAttribute('r', 5);
+      c.setAttribute('fill', ACC);
+      c.style.filter = 'drop-shadow(0 0 5px ' + ACC + ')';
+      ng.appendChild(c);
+    });
+
+    // pulses
+    var pg = byId('er-pulses'); pg.innerHTML = '';
+    var path = byId('er-wire'), N = 7;
+    pulses = [];
+    for (var i = 0; i < N; i++){
+      var c = document.createElementNS(NS, 'circle');
+      c.setAttribute('r', 3.6);
+      c.setAttribute('fill', '#fff');
+      c.style.filter = 'drop-shadow(0 0 6px ' + ACC + ') drop-shadow(0 0 3px ' + ACC + ')';
+      pg.appendChild(c);
+      pulses.push(c);
+    }
+    var dur = 4 / SPEED;
+    if (pulseTween) pulseTween.kill();
+    pulseTween = gsap.to(pulses, {
+      duration: dur, ease: 'none', repeat: -1,
+      motionPath: { path: path, align: path, alignOrigin: [0.5, 0.5] },
+      stagger: { each: dur / N }
+    });
+  }
+
+  function onResize(){
+    clearTimeout(rz);
+    rz = setTimeout(function(){
+      if (pulseTween) pulseTween.kill();
+      buildCurrent();
+    }, 160);
+  }
+
+  function init(){
+    if (!window.gsap || !window.MotionPathPlugin){
+      return setTimeout(init, 100);
+    }
+    gsap.registerPlugin(window.MotionPathPlugin);
+    document.documentElement.style.setProperty('--acc', ACC);
+    buildCurrent();
+    scheduleStrike(700);
+    gsap.to('.er-node-glow', {
+      opacity: 0.85, duration: 0.9, ease: 'sine.inOut',
+      yoyo: true, repeat: -1, stagger: { each: 0.55 }
+    });
+    window.addEventListener('resize', onResize);
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
