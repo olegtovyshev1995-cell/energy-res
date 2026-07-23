@@ -375,16 +375,22 @@
     if (f) f.style.display = ''; if (d) d.style.display = 'none';
     var ph = m.querySelector('[data-price-phone]'); if (ph) { ph.value = ''; ph.style.borderColor = ''; }
   }
-  function openPrice() { var d = document.getElementById('er-detail-modal'); if (d) d.style.display = 'none'; var m = document.getElementById('er-price-modal'); if (m) { resetPrice(); fillPrice(m); m.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
+  function hideDetailModals() { var ms = document.querySelectorAll('.er-detail-modal'); for (var i = 0; i < ms.length; i++) ms[i].style.display = 'none'; }
+  function openPrice() { hideDetailModals(); var m = document.getElementById('er-price-modal'); if (m) { resetPrice(); fillPrice(m); m.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
   function closePrice() { var m = document.getElementById('er-price-modal'); if (m) { m.style.display = 'none'; document.body.style.overflow = ''; } }
   function openDetail(kw) {
-    var m = document.getElementById('er-detail-modal'); if (!m) return;
-    var panels = m.querySelectorAll('[data-detail]');
-    for (var i = 0; i < panels.length; i++) { panels[i].style.display = (panels[i].getAttribute('data-detail') === String(kw)) ? 'block' : 'none'; }
-    var inner = m.querySelector('[data-act="stop"]'); if (inner) inner.scrollTop = 0;
-    m.scrollTop = 0; m.style.display = 'flex'; document.body.style.overflow = 'hidden';
+    var modals = document.querySelectorAll('.er-detail-modal'); if (!modals.length) return;
+    var target = null;
+    for (var k = 0; k < modals.length; k++) {
+      var panels = modals[k].querySelectorAll('[data-detail]'), found = false;
+      for (var i = 0; i < panels.length; i++) { var match = panels[i].getAttribute('data-detail') === String(kw); panels[i].style.display = match ? 'block' : 'none'; if (match) found = true; }
+      if (found) target = modals[k]; else modals[k].style.display = 'none';
+    }
+    if (!target) return;
+    var inner = target.querySelector('[data-act="stop"]'); if (inner) inner.scrollTop = 0;
+    target.scrollTop = 0; target.style.display = 'flex'; document.body.style.overflow = 'hidden';
   }
-  function closeDetail() { var m = document.getElementById('er-detail-modal'); if (m) { m.style.display = 'none'; document.body.style.overflow = ''; } }
+  function closeDetail() { hideDetailModals(); document.body.style.overflow = ''; }
   function submitPrice(scope) {
     var ph = scope.querySelector('[data-price-phone]');
     var digits = (ph ? ph.value : '').replace(/\D/g, '');
@@ -1794,7 +1800,7 @@
   </div>
 </div>
 
-<div id="er-detail-modal" style="display:none;position:fixed;inset:0;z-index:9600;background:rgba(0,0,0,.74);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto" data-act="close-detail">
+<div id="er-detail-modal" class="er-detail-modal" style="display:none;position:fixed;inset:0;z-index:9600;background:rgba(0,0,0,.74);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto" data-act="close-detail">
   <div data-act="stop" style="position:relative;width:100%;max-width:540px;margin:auto;background:linear-gradient(180deg,#16161c,#0d0d11);border:1px solid var(--line);border-radius:22px;padding:clamp(22px,3vw,32px);box-shadow:0 40px 100px rgba(0,0,0,.7);text-align:left">
     <button data-act="close-detail" aria-label="Закрыть" class="er-x" style="position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:#1a1a21;border:1px solid var(--line);color:#cfcfd6;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:3;transition:border-color .15s,color .15s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     
