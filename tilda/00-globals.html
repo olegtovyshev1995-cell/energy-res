@@ -356,16 +356,22 @@
     if (f) f.style.display = ''; if (d) d.style.display = 'none';
     var ph = m.querySelector('[data-price-phone]'); if (ph) { ph.value = ''; ph.style.borderColor = ''; }
   }
-  function openPrice() { var d = document.getElementById('er-detail-modal'); if (d) d.style.display = 'none'; var m = document.getElementById('er-price-modal'); if (m) { resetPrice(); fillPrice(m); m.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
+  function hideDetailModals() { var ms = document.querySelectorAll('.er-detail-modal'); for (var i = 0; i < ms.length; i++) ms[i].style.display = 'none'; }
+  function openPrice() { hideDetailModals(); var m = document.getElementById('er-price-modal'); if (m) { resetPrice(); fillPrice(m); m.style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
   function closePrice() { var m = document.getElementById('er-price-modal'); if (m) { m.style.display = 'none'; document.body.style.overflow = ''; } }
   function openDetail(kw) {
-    var m = document.getElementById('er-detail-modal'); if (!m) return;
-    var panels = m.querySelectorAll('[data-detail]');
-    for (var i = 0; i < panels.length; i++) { panels[i].style.display = (panels[i].getAttribute('data-detail') === String(kw)) ? 'block' : 'none'; }
-    var inner = m.querySelector('[data-act="stop"]'); if (inner) inner.scrollTop = 0;
-    m.scrollTop = 0; m.style.display = 'flex'; document.body.style.overflow = 'hidden';
+    var modals = document.querySelectorAll('.er-detail-modal'); if (!modals.length) return;
+    var target = null;
+    for (var k = 0; k < modals.length; k++) {
+      var panels = modals[k].querySelectorAll('[data-detail]'), found = false;
+      for (var i = 0; i < panels.length; i++) { var match = panels[i].getAttribute('data-detail') === String(kw); panels[i].style.display = match ? 'block' : 'none'; if (match) found = true; }
+      if (found) target = modals[k]; else modals[k].style.display = 'none';
+    }
+    if (!target) return;
+    var inner = target.querySelector('[data-act="stop"]'); if (inner) inner.scrollTop = 0;
+    target.scrollTop = 0; target.style.display = 'flex'; document.body.style.overflow = 'hidden';
   }
-  function closeDetail() { var m = document.getElementById('er-detail-modal'); if (m) { m.style.display = 'none'; document.body.style.overflow = ''; } }
+  function closeDetail() { hideDetailModals(); document.body.style.overflow = ''; }
   function submitPrice(scope) {
     var ph = scope.querySelector('[data-price-phone]');
     var digits = (ph ? ph.value : '').replace(/\D/g, '');
