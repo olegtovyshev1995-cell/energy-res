@@ -299,7 +299,7 @@
   // Куда вести после успешной отправки любой формы-заявки. Относительный путь
   // работает и на GitHub Pages (…/energy-res/thank-you.html), и на Tilda-домене.
   // null — не переадресовывать (показать только встроенный экран «принято»).
-  var ER_THANKYOU_URL = 'thank-you.html';
+  var ER_THANKYOU_URL = '/thank-you';
   function erSetVal(form, name, val) {
     if (val == null || val === '') return;
     var el = form.querySelector('[name="' + name + '" i]');
